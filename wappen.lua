@@ -1,6 +1,7 @@
 
 local wappen = {}
-
+local allTargets = {}
+  
 local function load()
   
   playingAreaWidth = love.graphics.getWidth()
@@ -27,7 +28,7 @@ local function load()
   
   
   
-  allTargets = {}
+
   
   function createTarget()
    target = {} 
@@ -122,6 +123,7 @@ local function draw()
   end
 end
 
+wappen.allTargets = allTargets
 wappen.load = load
 wappen.update = update
 wappen.draw = draw
