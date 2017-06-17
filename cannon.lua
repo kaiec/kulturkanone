@@ -1,25 +1,55 @@
 local cannon = {}
 
+require 'slam'
 local wappen = require('wappen')
 
+alarm = love.audio.newSource("audio/scifiShoot.wav")
+
+function getBoundingBoxBall(ball)
+  local ball_left = ball.x - cannonball1:getWidth() / 2
+  local ball_right = ball_left + cannonball1:getWidth()
+  local ball_width = cannonball1:getWidth()
+  local ball_top = ball.y - cannonball1:getHeight() / 2
+  local ball_bottom = ball_top + cannonball1:getHeight()
+  local ball_height = cannonball1:getHeight()
+  return ball_left, ball_top, ball_width, ball_height
+end
+
+
+
 function checkCollision(ball)
-  local ball_left = ball.x
-  local ball_right = ball.x + cannonball1:getWidth()
-  local ball_top = ball.y
-  local ball_bottom = ball.y + cannonball1:getHeight()
+  ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
+  local ball_right = ball_left + ball_width
+  local ball_bottom = ball_top + ball_height
+  
+  local t = wappen.allTargets
+  for i = #t, 1, -1 do
+    local v = t[i]
+    v_left, v_top, v_width, v_height  = wappen.getBoundingBox(v)
+    local v_right = v_left + v_width
+    local v_bottom = v_top + v_height
 
-  for i, v in ipairs(wappen.allTargets) do
-    local v_left = v.targetX
-    local v_right = v.targetX + v.image:getWidth()
-    local v_top = v.targetY
-    local v_bottom = v.targetY + v.image:getHeight()
+    --if ball_right < v_right and
+    --ball_left > v_left and
+    --ball_bottom < v_bottom and
+    --ball_top > v_top then
+    
+    -- if (math.abs(ball_left -v_left) * 2 <= (ball_width + v_width)) and
+    -- (math.abs(ball_top - v_top) * 2 <=(ball_height + v_height)) then
 
-    if ball_right > v_left and
-    ball_left < v_right and
-    ball_bottom > v_top and
-    ball_top < v_bottom then
+    if not (ball_left > v_right or 
+      ball_right < v_left or
+      ball_top > v_bottom or
+      ball_bottom < v_top
+      ) then
 
-      print("Erfolgreich")
+      love.audio.play(alarm)
+      table.remove(wappen.allTargets, i)
+
+      return true
+
+    else return false
+
     end
   end
 end
@@ -168,14 +198,21 @@ local function update(dt)
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
-    checkCollision(v)
+
+    if checkCollision(v) then 
+      table.remove(bullets1, i)
+    end
+
   end
 
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
-    checkCollision(v)
+
+    if checkCollision(v) then 
+      table.remove(bullets2, i)
+    end
   end
 
 end
@@ -208,22 +245,26 @@ local function draw()
   for i,v in ipairs(bullets1) do
     --love.graphics.circle("fill", v.x, v.y, 8)
     love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
+    love.graphics.circle("fill",v.x, v.y, 4)
+    b_left, b_top, b_width, b_height = getBoundingBoxBall(v)
+    love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
     or v.y > playgroundHeight then
-      table.remove(bullets1)
+      table.remove(bullets1, i)
     end
 
   end
   for i,v in ipairs(bullets2) do
     --love.graphics.circle("fill", v.x, v.y, 8)
     love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
+    love.graphics.circle("fill",v.x, v.y, 4)
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
     or v.y > playgroundHeight then
-      table.remove(bullets2)
+      table.remove(bullets2, i)
     end
   end
 end
