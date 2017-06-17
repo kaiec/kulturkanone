@@ -1,5 +1,30 @@
 local cannon = {}
 
+local wappen = require('wappen')
+
+function checkCollision(ball)
+  local ball_left = ball.x
+  local ball_right = ball.x + cannonball1:getWidth()
+  local ball_top = ball.y
+  local ball_bottom = ball.y + cannonball1:getHeight()
+
+  for i, v in ipairs(wappen.allTargets) do
+    local v_left = v.targetX
+    local v_right = v.targetX + v.image:getWidth()
+    local v_top = v.targetY
+    local v_bottom = v.targetY + v.image:getHeight()
+
+    if ball_right > v_left and
+    ball_left < v_right and
+    ball_bottom > v_top and
+    ball_top < v_bottom then
+
+      print("Erfolgreich")
+    end
+  end
+end
+
+
 function deg2rad(deg)
   return deg/360*2*pi
 end
@@ -10,15 +35,15 @@ end
 
 
 function abschussVektor1(cannon)
-    dy = - math.sin(cannon1.rohr + cannon1.rotation) * cannon1.speed
-    dx = - math.cos(cannon1.rohr + cannon1.rotation) * cannon1.speed
+  dy = - math.sin(cannon1.rohr + cannon1.rotation) * cannon1.speed
+  dx = - math.cos(cannon1.rohr + cannon1.rotation) * cannon1.speed
 
   return dx, dy
 end
 
 function abschussVektor2(cannon)
-    dy =  - math.sin(cannon2.rohr - cannon2.rotation) * cannon2.speed
-    dx =  math.cos(cannon2.rohr - cannon2.rotation) * cannon2.speed
+  dy =  - math.sin(cannon2.rohr - cannon2.rotation) * cannon2.speed
+  dx =  math.cos(cannon2.rohr - cannon2.rotation) * cannon2.speed
 
   return dx, dy
 end
@@ -70,12 +95,12 @@ local function load()
 --bang:setVolume(0.9) -- 90% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
 --bang:setVolume(0.7)
-  
+
 
   background = love.graphics.newImage("background/Hintergrund-Stuttgart2.png")
   cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
-  
+
   playgroundWidth = love.graphics.getWidth()
   playgroundHeight = love.graphics.getHeight()
   bulletX = playgroundWidth
@@ -122,36 +147,37 @@ local function load()
     ky = 25,
     speed = 400
   }
- 
-  end
+
+end
 
 local function update(dt)
-   if love.keyboard.isDown("left") then
+
+  if love.keyboard.isDown("left") then
     cannon1.rotation = cannon1.rotation - deg2rad(2)
   elseif love.keyboard.isDown("right") then
     cannon1.rotation = cannon1.rotation + deg2rad(2)
   end
-  
-   if love.keyboard.isDown("a") then
+
+  if love.keyboard.isDown("a") then
     cannon2.rotation = cannon2.rotation - deg2rad(2)
   elseif love.keyboard.isDown("d") then
     cannon2.rotation = cannon2.rotation + deg2rad(2)
   end
-  
-  
 
   for i,v in ipairs(bullets1) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
+    checkCollision(v)
   end
-  
+
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
+    checkCollision(v)
   end
-  
+
 end
 
 local function draw()
@@ -166,14 +192,14 @@ local function draw()
   --love.graphics.circle("fill", cannon2.x, cannon2.y, 4)
   --startX, startY = abschussPosition2(cannon2)
   --love.graphics.circle("fill", startX, startY, 4)
-  
+
   --love.graphics.circle("fill", cannon1.x, cannon1.y, 4)
-  
+
   --love.graphics.circle("fill", startX, startY, 4)
   startX, startY = abschussPosition1(cannon1)
   dx, dy = abschussVektor1(cannon1)
   love.graphics.line(startX, startY, startX + dx, startY + dy)
-  
+
   startX, startY = abschussPosition2(cannon2)
   dx, dy = abschussVektor2(cannon2)
   love.graphics.line(startX, startY, startX + dx, startY + dy)
@@ -188,11 +214,17 @@ local function draw()
     or v.y > playgroundHeight then
       table.remove(bullets1)
     end
-    
+
   end
   for i,v in ipairs(bullets2) do
     --love.graphics.circle("fill", v.x, v.y, 8)
-    love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2) 
+    love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
+    if v.x < 0 
+    or v.y < 0 
+    or v.x > playgroundWidth
+    or v.y > playgroundHeight then
+      table.remove(bullets2)
+    end
   end
 end
 
