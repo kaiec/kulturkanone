@@ -40,8 +40,10 @@ function love.keypressed(key, scancode, isrepeat)
   if key == "m" then
     startX, startY = abschussPosition1(cannon1)
     dx, dy = abschussVektor1(cannon1)
-    table.insert(bullets, {x = startX, y = startY, dx = dx, dy = dy})
-    bang:play()
+    if #bullets1 < 1 then
+      table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+      bang:play()
+    end
   
 --  elseif key == "a" then
 --    cannon2.rotation = cannon2.rotation - deg2rad(2)
@@ -50,7 +52,7 @@ function love.keypressed(key, scancode, isrepeat)
   elseif key=="f" then
     startX, startY = abschussPosition2(cannon2)
     dx, dy = abschussVektor2(cannon2)
-    table.insert(bullets, {x = startX, y = startY, dx = dx, dy = dy})
+    table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
     bang:play()
   end
 end
