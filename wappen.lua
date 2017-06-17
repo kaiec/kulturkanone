@@ -36,10 +36,11 @@ local function load()
     target.targetWidth = 75
     target.targetY = 0
     target.speed = 250
-    --love.math.random(200, 300)
+    
+    target.speedi = love.math.random(-100, 100)
     target.targetX = (playingAreaWidth)-(target.targetWidth/2)
     target.image = images[love.math.random(1, #images)]
-    target.point1Y = love.math.random(0, playingAreaHeight/2)
+    target.point1Y = love.math.random(0, playingAreaHeight)
     target.point2Y = love.math.random(0, playingAreaHeight)
     target.point3Y = love.math.random(0, playingAreaHeight)
     target.point4Y = love.math.random(0, playingAreaHeight)
@@ -87,12 +88,7 @@ local function update(dt)
       end
       end
       
-      --if v.targetY > v.point1Y then
-        --while v.targetX do
-       -- v.targetX = v.targetX - 100 * dt
-      -- v.targetY = v.targetY + v.speed * dt
-       -- end
-       -- end
+      
       
         if v.targetY > playingAreaHeight then
             v.targetY = 0
