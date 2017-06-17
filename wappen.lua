@@ -49,6 +49,17 @@ local function load()
   end 
   end
 
+
+function getBoundingBoxWappen(v)
+    local v_left = v.targetX
+    local v_right = v.targetX + v.image:getWidth()
+    local v_width = v.image:getWidth()
+    local v_top = v.targetY
+    local v_bottom = v.targetY + v.image:getHeight()
+    local v_height = v.image:getHeight()
+    return v_left, v_top, v_width, v_height 
+end
+
 local function update(dt)
    
     
@@ -112,7 +123,11 @@ local function draw()
    
   
   for i,v in ipairs(allTargets) do
-    love.graphics.draw(v.image, v.targetX, v.targetY, 0, 1)
+    love.graphics.draw(v.image, v.targetX, v.targetY, 0, 1, 1)
+    love.graphics.circle("fill",v.targetX, v.targetY, 4)
+    love.graphics.circle("fill",v.targetX + v.image:getWidth(), v.targetY + v.image:getHeight(), 4)
+    b_left, b_top, b_width, b_height = getBoundingBoxWappen(v)
+    love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
  end
  
  if #allTargets > 3 then
@@ -129,5 +144,6 @@ wappen.allTargets = allTargets
 wappen.load = load
 wappen.update = update
 wappen.draw = draw
+wappen.getBoundingBox = getBoundingBoxWappen
 
 return wappen

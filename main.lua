@@ -40,7 +40,7 @@ function love.keypressed(key, scancode, isrepeat)
   if key == "m" then
     startX, startY = abschussPosition1(cannon1)
     dx, dy = abschussVektor1(cannon1)
-    if #bullets1 < 1 then
+    if #bullets1 < 3 then
       table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
       bang:play()
     end
@@ -52,7 +52,7 @@ function love.keypressed(key, scancode, isrepeat)
   elseif key=="f" then
     startX, startY = abschussPosition2(cannon2)
     dx, dy = abschussVektor2(cannon2)
-    if #bullets2 < 1 then
+    if #bullets2 < 3 then
       table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
       bang:play()
     end
