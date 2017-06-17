@@ -38,11 +38,11 @@ local function load()
     --love.math.random(200, 300)
     target.targetX = (playingAreaWidth)-(target.targetWidth/2)
     target.image = images[love.math.random(1, #images)]
-    point1Y = love.math.random(0, playingAreaHeight/2)
-    point2Y = love.math.random(0, playingAreaHeight)
-    point3Y = love.math.random(0, playingAreaHeight)
-    point4Y = love.math.random(0, playingAreaHeight)
-    point5Y = love.math.random(playingAreaHeight/2, playingAreaHeight)
+    target.point1Y = love.math.random(0, playingAreaHeight/2)
+    target.point2Y = love.math.random(0, playingAreaHeight)
+    target.point3Y = love.math.random(0, playingAreaHeight)
+    target.point4Y = love.math.random(0, playingAreaHeight)
+    target.point5Y = love.math.random(playingAreaHeight/2, playingAreaHeight)
     
     table.insert(allTargets, target)
   end 
@@ -55,31 +55,41 @@ local function update(dt)
   for i,v in ipairs(allTargets) do
     
     
+      --Die Bewegung der Objekte von Rechts nach Links
         if v.targetX > (playingAreaWidth/2) then
         v.targetX = v.targetX - v.speed * dt
         end
       
+      --Die Objekte erreichen den Mittelpunkt des Windows
         if v.targetX <= playingAreaWidth/2 then
         v.targetY = v.targetY + v.speed * dt
       end
       
+      --Erzeugen des zweiten Objektes
       if v.targetX < playingAreaWidth - 250 then
         if #allTargets<2 then
         createTarget()
       end
     end
     
-    if v.targetY > 100 then
+    --Erzeugen des dritten Objektes
+    if v.targetY > v.point3Y then
       if #allTargets<3 then
         createTarget()
       end
     end
     
-    if v.targetY > 350 then
+    --Erzeugen des vierten Objektes
+    if v.targetY > v.point2Y then
       if #allTargets<4 then
         createTarget()
       end
       end
+      
+      if v.targetY > v.point1Y then
+        local speed = love.math.random(80, 120)
+        v.targetX = v.targetX + speed * dt
+        end
       
         if v.targetY > playingAreaHeight then
             v.targetY = 0
@@ -91,6 +101,9 @@ local function update(dt)
           end
     end
 end
+
+    
+
 
 local function draw()
    
