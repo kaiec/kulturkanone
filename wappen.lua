@@ -86,12 +86,12 @@ local function update(dt)
       end
       end
       
-      if v.targetY > v.point1Y then
-        for i=0,150 do
-        v.targetX = v.targetX - 100 * dt
-        v.targetY = v.targetY + v.speed * dt
-        end
-        end
+      --if v.targetY > v.point1Y then
+        --while v.targetX do
+       -- v.targetX = v.targetX - 100 * dt
+      -- v.targetY = v.targetY + v.speed * dt
+       -- end
+       -- end
       
         if v.targetY > playingAreaHeight then
             v.targetY = 0
