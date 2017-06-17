@@ -18,8 +18,13 @@ function checkCollision(ball)
     ball_left < v_right and
     ball_bottom > v_top and
     ball_top < v_bottom then
-
-      print("Erfolgreich")
+    
+      table.remove(wappen.allTargets, i)
+    
+      return true
+    
+    else return false
+    
     end
   end
 end
@@ -168,14 +173,21 @@ local function update(dt)
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
-    checkCollision(v)
+    
+    if checkCollision(v) then 
+      table.remove(bullets1, i)
+    end
+    
   end
 
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
-    checkCollision(v)
+    
+    if checkCollision(v) then 
+      table.remove(bullets2, i)
+    end
   end
 
 end
