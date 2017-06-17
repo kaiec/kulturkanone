@@ -56,7 +56,7 @@ local function update(dt)
     
     
       --Die Bewegung der Objekte von Rechts nach Links
-        if v.targetX > (playingAreaWidth/2) then
+        if v.targetX > (playingAreaWidth/2) and v.targetY < 1 then
         v.targetX = v.targetX - v.speed * dt
         end
       
@@ -87,8 +87,10 @@ local function update(dt)
       end
       
       if v.targetY > v.point1Y then
-        local speed = love.math.random(80, 120)
-        v.targetX = v.targetX + speed * dt
+        for i=0,150 do
+        v.targetX = v.targetX - 100 * dt
+        v.targetY = v.targetY + v.speed * dt
+        end
         end
       
         if v.targetY > playingAreaHeight then
