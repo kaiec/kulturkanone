@@ -8,6 +8,7 @@ local startmenu = require ('startmenu')
 local gamestate = "start"
 
 function love.load()
+    love.window.setFullscreen(true)
     startmenu.load()
     coundownAndRememberWappen.load()
     wappen.load()
