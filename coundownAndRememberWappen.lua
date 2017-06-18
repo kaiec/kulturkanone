@@ -34,7 +34,7 @@ local function update(dt)
   
   remaining_time = remaining_time -dt
   
-  if remaining_time < = 0 then
+  if remaining_time <= 0 then
     modulState = true
     end
   
@@ -48,8 +48,8 @@ local function draw()
       love.graphics.draw(v, playingAreaWidth/2, 250, 0, 1, 1)
     end
     
-    if i>1 and i <5
-    love.graphics.draw(v, imageX*i, imageY*i, 0, 1, 1)
+    if i>1 and i <5 then
+      love.graphics.draw(v, imageX*i, imageY*i, 0, 1, 1)
   end
   
 end
@@ -59,6 +59,7 @@ end
 
 function isDone()
   return modulState
+end
 
 coundownAndRememberWappen.load= load
 coundownAndRememberWappen.update = update
