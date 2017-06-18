@@ -195,8 +195,8 @@ local function load()
 
   cannon1 = {
     sprite = cannon1sprite, 
-    x = playgroundWidth - 200, 
-    y = playgroundHeight - 100, 
+    x = playgroundWidth - 150, 
+    y = playgroundHeight - 50, 
     width = cannon1sprite:getWidth(), 
     height = cannon1sprite:getHeight(), 
     rohr = deg2rad(17.98), 
@@ -206,12 +206,12 @@ local function load()
     rotation = 0,
     kx = 14,
     ky = 19,
-    speed = 400
+    speed = playgroundWidth/3
   }
   cannon2 = {
     sprite = cannon2sprite, 
     x = 100, 
-    y = playgroundHeight - 100, 
+    y = playgroundHeight - 50, 
     width = cannon2sprite:getWidth(), 
     height = cannon2sprite:getHeight(), 
     rohr = deg2rad(5.35), 
@@ -221,7 +221,7 @@ local function load()
     rotation = 0,
     kx = 366,
     ky = 25,
-    speed = 400
+    speed = playgroundWidth/3
   }
 
 end
