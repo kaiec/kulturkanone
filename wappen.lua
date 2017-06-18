@@ -54,7 +54,7 @@ local function load()
       target.correct = false
     else
       target.image = images[love.math.random(1, #images)]
-      target.correct = wrong
+      target.correct = true
     end
     target.point1Y = love.math.random(0, playingAreaHeight)
     target.point2Y = love.math.random(0, playingAreaHeight)
@@ -118,9 +118,7 @@ local function update(dt)
       
       
         if v.targetY > playingAreaHeight then
-            v.targetY = 0
-            v.targetX = playingAreaWidth
-            
+            table.remove(allTargets, i)
           end
     end
 end

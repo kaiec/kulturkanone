@@ -25,7 +25,7 @@ end
 
 
 
-function checkCollision(ball)
+function checkCollision(ball, cnr)
   ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
@@ -50,6 +50,20 @@ function checkCollision(ball)
       ball_top > v_bottom or
       ball_bottom < v_top
       ) then
+
+      if v.correct == true then
+        if cnr == 1 then
+          score1 = score1 + 1
+        else
+          score2 = score2 + 1
+        end
+      else
+        if cnr == 1 then
+          score1 = score1 - 1
+        else
+          score2 = score2 - 1
+        end
+      end
 
       love.audio.play(alarm)
       table.remove(wappen.allTargets, i)
@@ -215,10 +229,9 @@ local function update(dt)
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
 
-    if checkCollision(v) then 
+    if checkCollision(v, 1) then 
       --addExplosion(v.x, v.y)
       table.remove(bullets1, i)
-      score1 = score1 + 1
     end
 
   end
@@ -228,9 +241,8 @@ local function update(dt)
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
 
-    if checkCollision(v) then 
+    if checkCollision(v, 2) then 
       table.remove(bullets2, i)
-      score2 = score2 + 1
     end
   end
 
