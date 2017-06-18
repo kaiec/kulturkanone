@@ -5,7 +5,7 @@ local cannon = require('cannon')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')
 local startmenu = require ('startmenu')
 
-local gamestate = "start"
+local gamestate = "spiel"
 
 function love.load()
     love.window.setFullscreen(true)

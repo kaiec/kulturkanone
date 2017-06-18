@@ -4,12 +4,15 @@ local modulState = false
 
 local font
 
+screenscale = love.graphics.getWidth() / 1536
+
+
 local function load()
 
   playingAreaWidth = love.graphics.getWidth()
   playingAreaHeight = love.graphics.getHeight()
 
-  font = love.graphics.newFont("fonts/carbon.ttf", 150)
+  font = love.graphics.newFont("fonts/carbon.ttf", 150 * screenscale)
 
 
   images = {}
@@ -30,7 +33,7 @@ local function load()
 
   imageX = playingAreaWidth/5
   imageY = playingAreaHeight/#images
-  remaining_time = 10
+  remaining_time = 21
 
   modulState = false
 end
@@ -72,7 +75,7 @@ local function draw()
 end
 
   love.graphics.setFont(font)
-  love.graphics.print(math.floor(remaining_time), 100, playingAreaHeight/2 - 50)
+  love.graphics.print(math.floor(remaining_time), 50, playingAreaHeight/2 - 50)
 end
 
 local function isDone()
