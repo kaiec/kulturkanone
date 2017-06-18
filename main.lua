@@ -57,7 +57,7 @@ function love.keypressed(key, scancode, isrepeat)
 --    cannon1.rotation = cannon1.rotation - deg2rad(2)
 --  elseif key == "right" then
 --    cannon1.rotation = cannon1.rotation + deg2rad(2)
-  if key == "m" then
+  if key == "m" and gamestate == "spiel" then
     startX, startY = abschussPosition1(cannon1)
     dx, dy = abschussVektor1(cannon1)
     if #bullets1 < 3 then
@@ -69,12 +69,17 @@ function love.keypressed(key, scancode, isrepeat)
 --    cannon2.rotation = cannon2.rotation - deg2rad(2)
 --  elseif key=="d" then
 --    cannon2.rotation = cannon2.rotation + deg2rad(2)
-  elseif key=="f" then
+  elseif key=="f" and gamestate == "spiel" then
     startX, startY = abschussPosition2(cannon2)
     dx, dy = abschussVektor2(cannon2)
     if #bullets2 < 3 then
       table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
       bang:play()
     end
-  end
+    
+  elseif key=="p" then
+     love.event.quit() 
+  end   
+
+  
 end
