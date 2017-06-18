@@ -155,7 +155,7 @@ local function load()
   font = love.graphics.newFont("fonts/carbon.ttf", 70 * screenscale)
   
   --COUNTDOWN
-  remainingTime = 181
+  remainingTime = 61
   gameover = false
   --//////////////////
   
