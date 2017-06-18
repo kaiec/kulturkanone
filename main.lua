@@ -3,10 +3,12 @@ require 'slam'
 local wappen = require('wappen')
 local cannon = require('cannon')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')
+local startmenu = require ('startmenu')
 
 local gamestate = "remember"
 
 function love.load()
+  startmenu.load()
     coundownAndRememberWappen.load()
     wappen.load()
     cannon.load()
