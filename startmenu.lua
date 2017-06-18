@@ -2,12 +2,16 @@ Menu = require 'menu'
 
 fullscreen = false
 
+local startmenu = {}
+
+modulState = false
+
 function love.load()
 	testmenu = Menu.new()
 	testmenu:addItem{
 		name = 'Start Game',
 		action = function()
-			-- do something
+			modulState = true
 		end
 	}
 
@@ -31,3 +35,12 @@ end
 function love.keypressed(key)
 	testmenu:keypressed(key)
 end
+
+function isDone()
+  return modulState
+end
+
+startmenu.load= load
+startmenu.update = update
+startmenu.draw = draw
+startmenu.done = isDone
