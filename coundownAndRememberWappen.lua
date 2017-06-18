@@ -24,7 +24,7 @@ local function load()
   table.insert(images,love.graphics.newImage("crest/117px-Coat_of_arms_of_Stuttgart_svg.png"))
   
   
-  imageX = playingAreaWidth/#images
+  imageX = playingAreaWidth/5
   imageY = playingAreaHeight/#images
   remaining_time = 10
   
@@ -47,19 +47,26 @@ local function draw()
   for i,v in ipairs(images) do
     
     if i == 1 then
-      love.graphics.draw(v, playingAreaWidth/2, 250, 0, 1, 1)
+      love.graphics.draw(v, playingAreaWidth/2, 25, 0, 1, 1)
     end
     
-    if i>1 and i <5 then
-      love.graphics.draw(v, imageX*i, imageY*i, 0, 1, 1)
+    if i>1 and i <6 then
+      love.graphics.draw(v, imageX *(i-1), playingAreaHeight/4, 0, 1, 1)
+      
+  end
+  if i>5 and i <10 then
+      love.graphics.draw(v, imageX *(i-5), playingAreaHeight/2, 0, 1, 1)
+      
+  end
+  
+  if i>9 and i <14 then
+      love.graphics.draw(v, imageX *(i-9), playingAreaHeight/1.3, 0, 1, 1)
+      
   end
   
 end
 
-
-
-
-love.graphics.print(math.floor(remaining_time), playingAreaWidth/2, playingAreaHeight-200)
+love.graphics.print(math.floor(remaining_time), playingAreaWidth/2+50, playingAreaHeight-200)
 end
 
 local function isDone()

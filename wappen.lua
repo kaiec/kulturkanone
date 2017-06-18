@@ -131,10 +131,10 @@ local function draw()
   
   for i,v in ipairs(allTargets) do
     love.graphics.draw(v.image, v.targetX, v.targetY, 0, 1, 1)
-    love.graphics.circle("fill",v.targetX, v.targetY, 4)
-    love.graphics.circle("fill",v.targetX + v.image:getWidth(), v.targetY + v.image:getHeight(), 4)
-    b_left, b_top, b_width, b_height = getBoundingBoxWappen(v)
-    love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
+    -- love.graphics.circle("fill",v.targetX, v.targetY, 4)
+    -- love.graphics.circle("fill",v.targetX + v.image:getWidth(), v.targetY + v.image:getHeight(), 4)
+    -- b_left, b_top, b_width, b_height = getBoundingBoxWappen(v)
+    -- love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
  end
  
  
