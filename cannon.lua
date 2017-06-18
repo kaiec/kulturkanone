@@ -147,7 +147,7 @@ local function load()
   font = love.graphics.newFont("fonts/carbon.ttf", 70)
   
   --COUNTDOWN
-  remaining_time = 15
+  remainingTime = 60
   gameover = false
   --//////////////////
   
@@ -224,8 +224,8 @@ end
 local function update(dt)
   
   --COUNTDOWN
-  remaining_time = remaining_time - dt 
-  if remaining_time <= 0 then
+  remainingTime = remainingTime - dt 
+  if remainingTime <= 0 then
     gameover = true
   end
   
@@ -335,8 +335,8 @@ local function draw()
   love.graphics.print(score2, 300, playgroundHeight - 100)
   
   --COUNTDOWN
-  love.graphics.print(math.floor(remaining_time), playgroundWidth / 2, playgroundHeight - 100)
-  if remaining_time < 11 and countdownIsOn == false then
+  love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
+  if remainingTime < 11 and countdownIsOn == false then
     love.audio.play(countdownAlarm)
     countdownIsOn = true
   end
