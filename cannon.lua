@@ -31,6 +31,10 @@ function checkCollision(ball, cnr)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
+  if ball_top < 120 then
+      return false
+  end
+  
   local t = wappen.allTargets
   for i = #t, 1, -1 do
     local v = t[i]
@@ -168,7 +172,7 @@ local function load()
 --bang:setVolume(0.7)
 
 
-  background = love.graphics.newImage("background/Hintergrund-Stuttgart2.png")
+  background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
   cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
 
@@ -280,7 +284,7 @@ end
 
 local function draw()
   love.graphics.setColor(200, 200, 200)
-  love.graphics.draw(background, 0, -90, 0, 0.39, 0.39)
+  love.graphics.draw(background, -20, -120, 0, 0.29, 0.29)
   love.graphics.setColor(255, 255, 255)
   --love.graphics.rectangle("fill",  player.x, player.y, player.width, player.height)
   love.graphics.draw(cannon1.sprite, cannon1.x, cannon1.y, cannon1.rotation, 0.7, 0.7, cannon1.ox, cannon1.oy) 
