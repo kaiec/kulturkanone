@@ -8,7 +8,7 @@ local startmenu = require ('startmenu')
 local gamestate = "remember"
 
 function love.load()
-  startmenu.load()
+ -- startmenu.load()
     coundownAndRememberWappen.load()
     wappen.load()
     cannon.load()
