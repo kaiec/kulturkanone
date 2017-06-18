@@ -1,5 +1,5 @@
 
-require 'slam'
+require('lib.slam')
 local wappen = require('wappen')
 local cannon = require('cannon')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')

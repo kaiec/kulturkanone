@@ -1,4 +1,4 @@
-Menu = require 'menu'
+Menu = require 'lib.menu'
 
 fullscreen = false
 
