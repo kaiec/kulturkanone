@@ -347,14 +347,15 @@ local function draw()
     end
   end
   
+  screenscale = love.graphics.getWidth() / 1536
   
   love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 
-    1.3 , 1)
+    1.2 * screenscale, 1 * screenscale)
     
   love.graphics.setFont(font)
   love.graphics.setColor(0,0,0)
-  love.graphics.print(score1, playgroundWidth - 350, playgroundHeight - 100)
-  love.graphics.print(score2, 350, playgroundHeight - 100)
+  love.graphics.print(score1, playgroundWidth - 400, playgroundHeight - 100)
+  love.graphics.print(score2, 400, playgroundHeight - 100)
   
   --COUNTDOWN
   love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
