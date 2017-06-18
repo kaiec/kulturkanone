@@ -26,7 +26,7 @@ end
 
 
 
-function checkCollision(ball)
+function checkCollision(ball, cnr)
   ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
@@ -51,6 +51,20 @@ function checkCollision(ball)
       ball_top > v_bottom or
       ball_bottom < v_top
       ) then
+
+      if v.correct == true then
+        if cnr == 1 then
+          score1 = score1 + 1
+        else
+          score2 = score2 + 1
+        end
+      else
+        if cnr == 1 then
+          score1 = score1 - 1
+        else
+          score2 = score2 - 1
+        end
+      end
 
       love.audio.play(alarm)
       table.remove(wappen.allTargets, i)
@@ -245,10 +259,9 @@ local function update(dt)
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
 
-    if checkCollision(v) then 
+    if checkCollision(v, 1) then 
       --addExplosion(v.x, v.y)
       table.remove(bullets1, i)
-      score1 = score1 + 1
     end
 
   end
@@ -258,9 +271,8 @@ local function update(dt)
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
 
-    if checkCollision(v) then 
+    if checkCollision(v, 2) then 
       table.remove(bullets2, i)
-      score2 = score2 + 1
     end
   end
 
@@ -282,21 +294,21 @@ local function draw()
   --love.graphics.circle("fill", cannon1.x, cannon1.y, 4)
 
   --love.graphics.circle("fill", startX, startY, 4)
-  startX, startY = abschussPosition1(cannon1)
-  dx, dy = abschussVektor1(cannon1)
-  love.graphics.line(startX, startY, startX + dx, startY + dy)
+  --startX, startY = abschussPosition1(cannon1)
+  --dx, dy = abschussVektor1(cannon1)
+  --love.graphics.line(startX, startY, startX + dx, startY + dy)
 
-  startX, startY = abschussPosition2(cannon2)
-  dx, dy = abschussVektor2(cannon2)
-  love.graphics.line(startX, startY, startX + dx, startY + dy)
+  --startX, startY = abschussPosition2(cannon2)
+  --dx, dy = abschussVektor2(cannon2)
+  --love.graphics.line(startX, startY, startX + dx, startY + dy)
 
   love.graphics.setColor(255, 255, 255)
   for i,v in ipairs(bullets1) do
     --love.graphics.circle("fill", v.x, v.y, 8)
     love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
-    love.graphics.circle("fill",v.x, v.y, 4)
-    b_left, b_top, b_width, b_height = getBoundingBoxBall(v)
-    love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
+    -- love.graphics.circle("fill",v.x, v.y, 4)
+    -- b_left, b_top, b_width, b_height = getBoundingBoxBall(v)
+    -- love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
@@ -308,7 +320,7 @@ local function draw()
   for i,v in ipairs(bullets2) do
     --love.graphics.circle("fill", v.x, v.y, 8)
     love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
-    love.graphics.circle("fill",v.x, v.y, 4)
+    -- love.graphics.circle("fill",v.x, v.y, 4)
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
