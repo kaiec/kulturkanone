@@ -1,5 +1,7 @@
 local coundownAndRememberWappen = {}
 
+modulState = false
+
 local function load()
   
   playingAreaWidth = love.graphics.getWidth()
@@ -54,15 +56,19 @@ local function draw()
   
 end
 
+
+
+
 love.graphics.print(math.floor(remaining_time), playingAreaWidth/2, playingAreaHeight-200)
 end
 
-function isDone()
+local function isDone()
   return modulState
 end
 
 coundownAndRememberWappen.load= load
 coundownAndRememberWappen.update = update
 coundownAndRememberWappen.draw = draw
+coundownAndRememberWappen.done = isDone
 
 return coundownAndRememberWappen

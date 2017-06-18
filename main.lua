@@ -4,28 +4,35 @@ local wappen = require('wappen')
 local cannon = require('cannon')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')
 
+local gamestate = "remember"
 
 function love.load()
-
-coundownAndRememberWappen.load()
-  --wappen.load()
-  --cannon.load()
-
+    coundownAndRememberWappen.load()
+    wappen.load()
+    cannon.load()
 end
 
 function love.update(dt)
-  coundownAndRememberWappen.update(dt)
-  --wappen.update(dt)
-  --cannon.update(dt)
+  if gamestate=="remember" then
+    coundownAndRememberWappen.update(dt)
+    if coundownAndRememberWappen.done() then
+      gamestate = "spiel"
+    end
+  elseif gamestate=="spiel" then
+    wappen.update(dt)
+    cannon.update(dt)
+  end
 
 end
 
 function love.draw()
-coundownAndRememberWappen.draw()
+  if gamestate=="remember" then
+    coundownAndRememberWappen.draw()
+  elseif gamestate=="spiel" then
+    cannon.draw()
+    wappen.draw()
+  end
 
-  --cannon.draw()
-
-  --wappen.draw()
 end
 
 
