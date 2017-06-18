@@ -13,6 +13,7 @@ function love.load()
     coundownAndRememberWappen.load()
     wappen.load()
     cannon.load()
+    print("Window size: ", love.graphics.getWidth(), love.graphics.getHeight())
 end
 
 function love.update(dt)
