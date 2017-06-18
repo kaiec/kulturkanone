@@ -5,6 +5,7 @@ local wappen = require('wappen')
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
+
 --explosionImg = love.graphics.newImage("explosion.png")
 --explosions = {}
 
@@ -144,13 +145,23 @@ local function load()
   score1 = 0
   score2 = 0
   font = love.graphics.newFont("fonts/carbon.ttf", 70)
+  
+  --COUNTDOWN
+  remainingTime = 60
+  gameover = false
+  --//////////////////
+  
+  countdownIsOn = false
+  
+  
  
   
   backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3")
-  backgroundMusic:setLooping(true)
+  backgroundMusic:setLooping(false)
   backgroundMusic:setVolume(.3)
   love.audio.play(backgroundMusic)
   bang = love.audio.newSource("audio/bang.wav")
+  countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
 --bang:setVolume(0.9) -- 90% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
@@ -211,6 +222,25 @@ local function load()
 end
 
 local function update(dt)
+  
+  --COUNTDOWN
+  remainingTime = remainingTime - dt 
+  if remainingTime <= 0 then
+    gameover = true
+  end
+  
+  if gameover then
+    function love.draw()
+      love.audio.stop(countdownAlarm)
+      love.graphics.print("Game Over", 370, playgroundHeight - 500)
+      love.graphics.setFont(font, 40)
+      love.graphics.print(score2, 300, playgroundHeight - 200)
+      love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 200)
+    end
+  end
+  
+  
+  --////////////////////////
 
   if love.keyboard.isDown("left") then
     cannon1.rotation = cannon1.rotation - deg2rad(2)
@@ -303,6 +333,14 @@ local function draw()
   love.graphics.setFont(font)
   love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 100)
   love.graphics.print(score2, 300, playgroundHeight - 100)
+  
+  --COUNTDOWN
+  love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
+  if remainingTime < 11 and countdownIsOn == false then
+    love.audio.play(countdownAlarm)
+    countdownIsOn = true
+  end
+    
   
 end
 
