@@ -2,27 +2,30 @@
 require 'slam'
 local wappen = require('wappen')
 local cannon = require('cannon')
-
+local coundownAndRememberWappen = require('coundownAndRememberWappen')
 
 
 function love.load()
 
-  wappen.load()
-  cannon.load()
+coundownAndRememberWappen.load()
+  --wappen.load()
+  --cannon.load()
 
 end
 
 function love.update(dt)
-  wappen.update(dt)
-  cannon.update(dt)
+  coundownAndRememberWappen.update(dt)
+  --wappen.update(dt)
+  --cannon.update(dt)
 
 end
 
 function love.draw()
+coundownAndRememberWappen.draw()
 
-  cannon.draw()
+  --cannon.draw()
 
-  wappen.draw()
+  --wappen.draw()
 end
 
 
