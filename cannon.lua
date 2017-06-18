@@ -153,7 +153,7 @@ local function load()
   font = love.graphics.newFont("fonts/carbon.ttf", 70)
   
   --COUNTDOWN
-  remainingTime = 60
+  remainingTime = 30
   gameover = false
   --//////////////////
   
@@ -176,6 +176,7 @@ local function load()
 
   background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
   brett = love.graphics.newImage("background/brett-anzeige.png")
+  endScreen = love.graphics.newImage("background/game over.png")
   cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
 
@@ -239,10 +240,18 @@ local function update(dt)
   if gameover then
     function love.draw()
       love.audio.stop(countdownAlarm)
-      love.graphics.print("Game Over", 370, playgroundHeight - 500)
-      love.graphics.setFont(font, 40)
-      love.graphics.print(score2, 300, playgroundHeight - 200)
-      love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 200)
+      love.graphics.draw(endScreen , 0, 0, 0, 
+      love.graphics.getWidth() / endScreen:getWidth() , 
+      love.graphics.getHeight() / endScreen:getHeight())      
+      love.graphics.setColor(255, 10, 10)
+      love.graphics.setFont(font)
+      
+      love.graphics.print("Game Over", love.graphics.getWidth()/3, playgroundHeight - 500)
+      love.graphics.setFont(font, love.graphics.getHeight() / 20)
+      love.graphics.print(score2, love.graphics.getWidth()/4, playgroundHeight - 100)
+      love.graphics.print(score1, love.graphics.getWidth()/4 * 3, playgroundHeight - 100)
+      love.graphics.setColor(255, 255, 255)
+    
     end
   end
   
