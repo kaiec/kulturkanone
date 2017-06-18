@@ -8,7 +8,7 @@ local function load()
   playingAreaHeight = love.graphics.getHeight()
   
   images = {}
-  table.insert(images, love.graphics.newImage("crest/105px-Wappen-stuttgart-vaihingen-stadtbezirk.png") )
+  table.insert(images, love.graphics.newImage("crest/105px-Wappen-stuttgart-vaihingen-stadtbezirk.png"))
   table.insert(images, love.graphics.newImage("crest/107px-Wappen_Stuttgart-Hofen_svg.png"))
   table.insert(images,love.graphics.newImage("crest/111px-Wappen-stuttgart-zazenhausen.png"))
   table.insert(images, love.graphics.newImage("crest/112px-Wappen-stuttgart-birkach.png"))
@@ -23,8 +23,18 @@ local function load()
   table.insert(images,love.graphics.newImage("crest/117px-Coat_of_arms_of_Stuttgart_svg.png"))
   
   
-  previewImage = images[love.math.random(1, #images)]
-  nextImage = images[love.math.random(1, #images)]
+  wrongs = {}
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/146px-Wappen_Oberreut.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/147px-Wappen_Nordstadt.svg.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Karlsruher_Oststadt.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Karlsruher_Suedweststadt.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Karlsruher_Weststadt.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Weiherfeld.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/150px-Wappen_Waldstadt.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/154px-Wappen_Karlsruher_Suedtstadt.png"))
+  table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Karlsruher_Nordweststadt.png"))
+
+  
   
   
   
@@ -39,7 +49,13 @@ local function load()
     
     target.speedi = love.math.random(-100, 100)
     target.targetX = (playingAreaWidth)-(target.targetWidth/2)
-    target.image = images[love.math.random(1, #images)]
+    if love.math.random(1,10)>5 then
+      target.image = wrongs[love.math.random(1, #wrongs)]
+      target.correct = false
+    else
+      target.image = images[love.math.random(1, #images)]
+      target.correct = wrong
+    end
     target.point1Y = love.math.random(0, playingAreaHeight)
     target.point2Y = love.math.random(0, playingAreaHeight)
     target.point3Y = love.math.random(0, playingAreaHeight)
@@ -104,9 +120,6 @@ local function update(dt)
         if v.targetY > playingAreaHeight then
             v.targetY = 0
             v.targetX = playingAreaWidth
-            v.image = nextImage
-            nextImage=previewImage
-            previewImage = images[love.math.random(1, #images)]
             
           end
     end
@@ -126,9 +139,6 @@ local function draw()
     love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
  end
  
- if #allTargets > 3 then
- love.graphics.draw(nextImage, 0, 0, 0, 1)
- end
  
  if #allTargets < 1 then
    createTarget()
