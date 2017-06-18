@@ -5,17 +5,22 @@ local cannon = require('cannon')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')
 local startmenu = require ('startmenu')
 
-local gamestate = "remember"
+local gamestate = "start"
 
 function love.load()
- -- startmenu.load()
+    startmenu.load()
     coundownAndRememberWappen.load()
     wappen.load()
     cannon.load()
 end
 
 function love.update(dt)
-  if gamestate=="remember" then
+  if gamestate=="start" then
+    startmenu.update(dt)
+    if startmenu.done() then
+      gamestate = "remember"
+    end
+  elseif gamestate=="remember" then
     coundownAndRememberWappen.update(dt)
     if coundownAndRememberWappen.done() then
       gamestate = "spiel"
@@ -28,7 +33,9 @@ function love.update(dt)
 end
 
 function love.draw()
-  if gamestate=="remember" then
+  if gamestate=="start" then
+    startmenu.draw()
+  elseif gamestate=="remember" then
     coundownAndRememberWappen.draw()
   elseif gamestate=="spiel" then
     cannon.draw()

@@ -1,6 +1,6 @@
 local coundownAndRememberWappen = {}
 
-modulState = false
+local modulState = false
 
 local function load()
 
