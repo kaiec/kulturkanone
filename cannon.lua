@@ -1,7 +1,9 @@
 local cannon = {}
 
-require 'slam'
+require 'lib.slam'
 local wappen = require('wappen')
+local background
+local brett
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
@@ -31,6 +33,10 @@ function checkCollision(ball, cnr)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
+  if ball_top < 120 then
+      return false
+  end
+  
   local t = wappen.allTargets
   for i = #t, 1, -1 do
     local v = t[i]
@@ -147,14 +153,12 @@ local function load()
   font = love.graphics.newFont("fonts/carbon.ttf", 70)
   
   --COUNTDOWN
-  remainingTime = 60
+  remainingTime = 31
   gameover = false
   --//////////////////
   
   countdownIsOn = false
   
-  
- 
   
   backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3")
   backgroundMusic:setLooping(false)
@@ -168,7 +172,9 @@ local function load()
 --bang:setVolume(0.7)
 
 
-  background = love.graphics.newImage("background/Hintergrund-Stuttgart2.png")
+  background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
+  brett = love.graphics.newImage("background/brett-anzeige.png")
+  endScreen = love.graphics.newImage("background/game over.png")
   cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
 
@@ -190,8 +196,8 @@ local function load()
 
   cannon1 = {
     sprite = cannon1sprite, 
-    x = playgroundWidth - 200, 
-    y = playgroundHeight - 100, 
+    x = playgroundWidth - 150, 
+    y = playgroundHeight - 50, 
     width = cannon1sprite:getWidth(), 
     height = cannon1sprite:getHeight(), 
     rohr = deg2rad(17.98), 
@@ -201,12 +207,12 @@ local function load()
     rotation = 0,
     kx = 14,
     ky = 19,
-    speed = 300
+    speed = playgroundWidth/3
   }
   cannon2 = {
     sprite = cannon2sprite, 
     x = 100, 
-    y = playgroundHeight - 100, 
+    y = playgroundHeight - 50, 
     width = cannon2sprite:getWidth(), 
     height = cannon2sprite:getHeight(), 
     rohr = deg2rad(5.35), 
@@ -216,7 +222,7 @@ local function load()
     rotation = 0,
     kx = 366,
     ky = 25,
-    speed = 300
+    speed = playgroundWidth/3
   }
 
 end
@@ -232,10 +238,18 @@ local function update(dt)
   if gameover then
     function love.draw()
       love.audio.stop(countdownAlarm)
-      love.graphics.print("Game Over", 370, playgroundHeight - 500)
-      love.graphics.setFont(font, 40)
-      love.graphics.print(score2, 300, playgroundHeight - 200)
-      love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 200)
+      love.graphics.draw(endScreen , 0, 0, 0, 
+      love.graphics.getWidth() / endScreen:getWidth() , 
+      love.graphics.getHeight() / endScreen:getHeight())      
+      love.graphics.setColor(255, 10, 10)
+      love.graphics.setFont(font)
+      
+      love.graphics.print("Game Over", love.graphics.getWidth()/3, playgroundHeight - 500)
+      love.graphics.setFont(font, love.graphics.getHeight() / 20)
+      love.graphics.print(score2, love.graphics.getWidth()/4, playgroundHeight - 300)
+      love.graphics.print(score1, love.graphics.getWidth()/4 * 3, playgroundHeight - 300)
+      love.graphics.setColor(255, 255, 255)
+    
     end
   end
   --////////////////////////
@@ -287,8 +301,10 @@ local function update(dt)
 end
 
 local function draw()
-  love.graphics.setColor(200, 200, 200)
-  love.graphics.draw(background, 0, -90, 0, 0.39, 0.39)
+  -- love.graphics.setColor(200, 200, 200)
+  love.graphics.draw(background, 0, 0, 0, 
+    love.graphics.getWidth() / background:getWidth() , 
+    love.graphics.getHeight() / background:getHeight())
   love.graphics.setColor(255, 255, 255)
   --love.graphics.rectangle("fill",  player.x, player.y, player.width, player.height)
   love.graphics.draw(cannon1.sprite, cannon1.x, cannon1.y, cannon1.rotation, 0.7, 0.7, cannon1.ox, cannon1.oy) 
@@ -337,20 +353,27 @@ local function draw()
     end
   end
   
+  screenscale = love.graphics.getWidth() / 1536
   
+  love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 
+    1.2 * screenscale, 1 * screenscale)
+    
   love.graphics.setFont(font)
-  love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 100)
-  love.graphics.print(score2, 300, playgroundHeight - 100)
+  love.graphics.setColor(0,0,0)
+  love.graphics.print(score1, playgroundWidth - 400, playgroundHeight - 100)
+  love.graphics.print(score2, 400, playgroundHeight - 100)
   
   --COUNTDOWN
   love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
+  love.graphics.setColor(255,255,255)
+
   if remainingTime < 11 and countdownIsOn == false then
     love.audio.play(countdownAlarm)
     countdownIsOn = true
   end
   
-  love.graphics.rectangle("fill", playgroundWidth - 100, playgroundHeight - 200, 20, -(cannon1.speed/2) + 140)
-  love.graphics.rectangle("fill", 100, playgroundHeight - 200, 20, -(cannon2.speed/2) + 140)
+--  love.graphics.rectangle("fill", playgroundWidth - 100, playgroundHeight - 200, 20, -(cannon1.speed/2) + 140)
+--  love.graphics.rectangle("fill", 100, playgroundHeight - 200, 20, -(cannon2.speed/2) + 140)
 end
 
 --function love.keyreleased(key)

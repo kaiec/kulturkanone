@@ -1,14 +1,15 @@
 local coundownAndRememberWappen = {}
 
-modulState = false
+local modulState = false
+
+local font
 
 local function load()
 
   playingAreaWidth = love.graphics.getWidth()
   playingAreaHeight = love.graphics.getHeight()
 
-  font = love.graphics.newFont("fonts/carbon.ttf", 70)
-  love.graphics.setFont(font)
+  font = love.graphics.newFont("fonts/carbon.ttf", 150)
 
 
   images = {}
@@ -47,6 +48,7 @@ end
 
 
 local function draw()
+  love.graphics.setBackgroundColor( 150,150,150 )
   for i,v in ipairs(images) do
 
     if i == 1 then
@@ -67,9 +69,10 @@ local function draw()
 
     end
 
-  end
+end
 
-  love.graphics.print(math.floor(remaining_time), 40, playingAreaHeight/2)
+  love.graphics.setFont(font)
+  love.graphics.print(math.floor(remaining_time), 100, playingAreaHeight/2 - 50)
 end
 
 local function isDone()
