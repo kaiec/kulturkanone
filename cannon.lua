@@ -348,9 +348,8 @@ local function draw()
   end
   
   
-  love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 1.3 * 
-        1500 / love.graphics.getWidth() , 
-    850 / love.graphics.getHeight())
+  love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 
+    1.3 , 1)
     
   love.graphics.setFont(font)
   love.graphics.setColor(0,0,0)
