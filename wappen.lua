@@ -8,7 +8,7 @@ local function load()
   playingAreaHeight = love.graphics.getHeight()
   
   images = {}
-  table.insert(images, love.graphics.newImage("crest/105px-Wappen-stuttgart-vaihingen-stadtbezirk.png") )
+  table.insert(images, love.graphics.newImage("crest/105px-Wappen-stuttgart-vaihingen-stadtbezirk.png"))
   table.insert(images, love.graphics.newImage("crest/107px-Wappen_Stuttgart-Hofen_svg.png"))
   table.insert(images,love.graphics.newImage("crest/111px-Wappen-stuttgart-zazenhausen.png"))
   table.insert(images, love.graphics.newImage("crest/112px-Wappen-stuttgart-birkach.png"))
@@ -23,8 +23,8 @@ local function load()
   table.insert(images,love.graphics.newImage("crest/117px-Coat_of_arms_of_Stuttgart_svg.png"))
   
   
-  previewImage = images[love.math.random(1, #images)]
-  nextImage = images[love.math.random(1, #images)]
+  
+  
   
   
   
@@ -104,9 +104,6 @@ local function update(dt)
         if v.targetY > playingAreaHeight then
             v.targetY = 0
             v.targetX = playingAreaWidth
-            v.image = nextImage
-            nextImage=previewImage
-            previewImage = images[love.math.random(1, #images)]
             
           end
     end
@@ -126,9 +123,6 @@ local function draw()
     love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
  end
  
- if #allTargets > 3 then
- love.graphics.draw(nextImage, 0, 0, 0, 1)
- end
  
  if #allTargets < 1 then
    createTarget()
