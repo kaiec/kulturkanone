@@ -186,7 +186,7 @@ local function load()
   rotation1 = 0
   rotation2 = 0
 
-  love.keyboard.setKeyRepeat(false)
+  love.keyboard.setKeyRepeat(true)
 
   cannon1 = {
     sprite = cannon1sprite, 
@@ -201,7 +201,7 @@ local function load()
     rotation = 0,
     kx = 14,
     ky = 19,
-    speed = 400
+    speed = 300
   }
   cannon2 = {
     sprite = cannon2sprite, 
@@ -216,7 +216,7 @@ local function load()
     rotation = 0,
     kx = 366,
     ky = 25,
-    speed = 400
+    speed = 300
   }
 
 end
@@ -238,8 +238,6 @@ local function update(dt)
       love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 200)
     end
   end
-  
-  
   --////////////////////////
 
   if love.keyboard.isDown("left") then
@@ -247,12 +245,22 @@ local function update(dt)
   elseif love.keyboard.isDown("right") then
     cannon1.rotation = cannon1.rotation + deg2rad(2)
   end
+--  if love.keyboard.isDown("m") then
+--    if cannon1.speed < 1000 then
+--      cannon1.speed = cannon1.speed + 30
+--    end
+--  end
 
   if love.keyboard.isDown("a") then
     cannon2.rotation = cannon2.rotation - deg2rad(2)
   elseif love.keyboard.isDown("d") then
     cannon2.rotation = cannon2.rotation + deg2rad(2)
   end
+--  if love.keyboard.isDown("f") then
+--    if cannon2.speed < 1000 then
+--      cannon2.speed = cannon2.speed + 30
+--    end
+--  end
 
   for i,v in ipairs(bullets1) do
     v.x = v.x + (v.dx * dt) 
@@ -340,8 +348,59 @@ local function draw()
     love.audio.play(countdownAlarm)
     countdownIsOn = true
   end
-    
   
+  love.graphics.rectangle("fill", playgroundWidth - 100, playgroundHeight - 200, 20, -(cannon1.speed/2) + 140)
+  love.graphics.rectangle("fill", 100, playgroundHeight - 200, 20, -(cannon2.speed/2) + 140)
+end
+
+--function love.keyreleased(key)
+--  if key == "m" then
+--    startX, startY = abschussPosition1(cannon1)
+--    dx, dy = abschussVektor1(cannon1)
+--    if #bullets1 < 2 then
+--      table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+--      bang:play()
+--      cannon1.speed = 300
+--    end
+--  end
+  
+--  if key == "f" then
+--    startX, startY = abschussPosition2(cannon2)
+--    dx, dy = abschussVektor2(cannon2)
+--    if #bullets2 < 2 then
+--      table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
+--      bang:play()
+--      cannon2.speed = 300
+--    end
+--  end
+--end
+
+function love.keypressed(key, scancode, isrepeat)
+--  if key == "left" then
+--    cannon1.rotation = cannon1.rotation - deg2rad(2)
+--  elseif key == "right" then
+--    cannon1.rotation = cannon1.rotation + deg2rad(2)
+  if key == "m" then
+    startX, startY = abschussPosition1(cannon1)
+    dx, dy = abschussVektor1(cannon1)
+    if #bullets1 < 3 then
+      table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+      bang:play()
+    end
+    
+
+--  elseif key == "a" then
+--    cannon2.rotation = cannon2.rotation - deg2rad(2)
+--  elseif key=="d" then
+--    cannon2.rotation = cannon2.rotation + deg2rad(2)
+  elseif key=="f" then
+    startX, startY = abschussPosition2(cannon2)
+    dx, dy = abschussVektor2(cannon2)
+    if #bullets2 < 3 then
+      table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
+      bang:play()
+    end
+  end
 end
 
 cannon.load = load
