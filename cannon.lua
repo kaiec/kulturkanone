@@ -3,6 +3,7 @@ local cannon = {}
 require 'lib.slam'
 local wappen = require('wappen')
 local background
+local brett
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
@@ -174,6 +175,7 @@ local function load()
 
 
   background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
+  brett = love.graphics.newImage("background/brett-anzeige.png")
   cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
 
@@ -337,12 +339,19 @@ local function draw()
   end
   
   
+  love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 1.3 * 
+        1500 / love.graphics.getWidth() , 
+    850 / love.graphics.getHeight())
+    
   love.graphics.setFont(font)
-  love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 100)
-  love.graphics.print(score2, 300, playgroundHeight - 100)
+  love.graphics.setColor(0,0,0)
+  love.graphics.print(score1, playgroundWidth - 350, playgroundHeight - 100)
+  love.graphics.print(score2, 350, playgroundHeight - 100)
   
   --COUNTDOWN
   love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
+  love.graphics.setColor(255,255,255)
+
   if remainingTime < 11 and countdownIsOn == false then
     love.audio.play(countdownAlarm)
     countdownIsOn = true
