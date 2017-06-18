@@ -21,7 +21,7 @@ function checkCollision(ball)
   ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
-  
+
   local t = wappen.allTargets
   for i = #t, 1, -1 do
     local v = t[i]
@@ -33,7 +33,7 @@ function checkCollision(ball)
     --ball_left > v_left and
     --ball_bottom < v_bottom and
     --ball_top > v_top then
-    
+
     -- if (math.abs(ball_left -v_left) * 2 <= (ball_width + v_width)) and
     -- (math.abs(ball_top - v_top) * 2 <=(ball_height + v_height)) then
 
@@ -48,10 +48,13 @@ function checkCollision(ball)
 
       return true
 
-    else return false
+    else 
+
+
 
     end
   end
+  return false
 end
 
 
