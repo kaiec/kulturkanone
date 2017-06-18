@@ -2,6 +2,7 @@ local cannon = {}
 
 require 'lib.slam'
 local wappen = require('wappen')
+local background
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
@@ -283,8 +284,10 @@ local function update(dt)
 end
 
 local function draw()
-  love.graphics.setColor(200, 200, 200)
-  love.graphics.draw(background, -20, -120, 0, 0.29, 0.29)
+  -- love.graphics.setColor(200, 200, 200)
+  love.graphics.draw(background, 0, 0, 0, 
+    love.graphics.getWidth() / background:getWidth() , 
+    love.graphics.getHeight() / background:getHeight())
   love.graphics.setColor(255, 255, 255)
   --love.graphics.rectangle("fill",  player.x, player.y, player.width, player.height)
   love.graphics.draw(cannon1.sprite, cannon1.x, cannon1.y, cannon1.rotation, 0.7, 0.7, cannon1.ox, cannon1.oy) 
