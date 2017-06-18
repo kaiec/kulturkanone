@@ -30,7 +30,7 @@ local function draw()
   love.graphics.print("Kulturkanone", 100, 100)
   love.graphics.setFont(font2)
   love.graphics.print("Merkt Euch alle Wappen von Stuttgart", 100, 200)
-  love.graphics.print("und schießt sie ab!", 100, 250)
+  love.graphics.print("und trefft sie!", 100, 250)
   love.graphics.print("Aber Vorsicht: Karlsruhe hat da", 100, 300)
   love.graphics.print("nichts verloren!", 100, 350)
 
