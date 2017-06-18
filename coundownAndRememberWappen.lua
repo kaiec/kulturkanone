@@ -48,6 +48,7 @@ end
 
 
 local function draw()
+  love.graphics.setBackgroundColor( 150,150,150 )
   for i,v in ipairs(images) do
 
     if i == 1 then
