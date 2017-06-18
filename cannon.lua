@@ -1,6 +1,6 @@
 local cannon = {}
 
-require 'slam'
+require 'lib.slam'
 local wappen = require('wappen')
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")

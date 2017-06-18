@@ -1,40 +1,21 @@
-Menu = require 'menu'
-
-fullscreen = false
-
 local startmenu = {}
 
-modulState = false
+local modulState = false
 
-function love.load()
-	testmenu = Menu.new()
-	testmenu:addItem{
-		name = 'Start Game',
-		action = function()
-			modulState = true
-		end
-	}
-
-
-	testmenu:addItem{
-		name = 'Ende',
-		action = function()
-			love.event.push('quit')
-		end
-	}
+local function load()
+  
 end
 
-function love.update(dt)
-	testmenu:update(dt)
+local function update(dt)
+  if love.keyboard.isDown("space") then
+    modulState = true
+  end
+
 end
 
-function love.draw()
-	testmenu:draw(10, 10)
+local function draw()
 end
 
-function love.keypressed(key)
-	testmenu:keypressed(key)
-end
 
 function isDone()
   return modulState
@@ -44,3 +25,5 @@ startmenu.load= load
 startmenu.update = update
 startmenu.draw = draw
 startmenu.done = isDone
+
+return startmenu
