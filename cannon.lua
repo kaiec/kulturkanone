@@ -5,6 +5,14 @@ local wappen = require('wappen')
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
+--explosionImg = love.graphics.newImage("explosion.png")
+--explosions = {}
+
+--function addExplosion(ball)
+  --table.insert(explosions, {x = ball.x, y = ball.y}
+--end
+
+
 function getBoundingBoxBall(ball)
   local ball_left = ball.x - cannonball1:getWidth() / 2
   local ball_right = ball_left + cannonball1:getWidth()
@@ -119,6 +127,11 @@ end
 
 
 local function load()
+  score1 = 0
+  score2 = 0
+  font = love.graphics.newFont("fonts/carbon.ttf", 70)
+ 
+  
   backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3")
   backgroundMusic:setLooping(true)
   backgroundMusic:setVolume(.3)
@@ -203,7 +216,9 @@ local function update(dt)
     v.dy = v.dy + 2
 
     if checkCollision(v) then 
+      --addExplosion(v.x, v.y)
       table.remove(bullets1, i)
+      score1 = score1 + 1
     end
 
   end
@@ -215,6 +230,7 @@ local function update(dt)
 
     if checkCollision(v) then 
       table.remove(bullets2, i)
+      score2 = score2 + 1
     end
   end
 
@@ -270,6 +286,12 @@ local function draw()
       table.remove(bullets2, i)
     end
   end
+  
+  
+  love.graphics.setFont(font)
+  love.graphics.print(score1, playgroundWidth - 300, playgroundHeight - 100)
+  love.graphics.print(score2, 300, playgroundHeight - 100)
+  
 end
 
 cannon.load = load
