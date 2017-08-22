@@ -7,6 +7,8 @@ local brett
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
+screenscale = love.graphics.getWidth() / 1536
+
 
 --explosionImg = love.graphics.newImage("explosion.png")
 --explosions = {}
@@ -150,10 +152,10 @@ end
 local function load()
   score1 = 0
   score2 = 0
-  font = love.graphics.newFont("fonts/carbon.ttf", 70)
+  font = love.graphics.newFont("fonts/carbon.ttf", 70 * screenscale)
   
   --COUNTDOWN
-  remainingTime = 31
+  remainingTime = 61
   gameover = false
   --//////////////////
   

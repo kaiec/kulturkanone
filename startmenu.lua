@@ -4,9 +4,12 @@ local modulState = false
 local background
 local font, font2
 
+screenscale = love.graphics.getWidth() / 1536
+
+
 local function load()
-  font = love.graphics.newFont("fonts/carbon.ttf", 70)
-  font2 = love.graphics.newFont("fonts/carbon.ttf", 30)
+  font = love.graphics.newFont("fonts/carbon.ttf", 70 * screenscale)
+  font2 = love.graphics.newFont("fonts/carbon.ttf", 30 * screenscale)
   background = love.graphics.newImage("background/hintergrund-schlacht.jpg")
 
     
