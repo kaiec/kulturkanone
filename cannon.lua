@@ -208,9 +208,9 @@ local function load()
     rotation = 0,
     kx = 14,
     ky = 19,
-    speed = playgroundWidth/6,
+    speed = 600,
     weapon = "default",
-    coolDownTime = 20
+    coolDownTime = 60
   }
   cannon2 = {
     sprite = cannon2sprite, 
@@ -225,13 +225,13 @@ local function load()
     rotation = 0,
     kx = 366,
     ky = 25,
-    speed = playgroundWidth/6,
+    speed = 600,
     weapon = "default",
-    coolDownTime = 40
+    coolDownTime = 60
   }
 
   laser = {
-    speed = playgroundWidth/2,
+    speed = 1000,
     weapon = "laser",
     coolDownTime = 10,
     sprite = love.graphics.newImage("cannon/laser.png")
@@ -246,6 +246,7 @@ end
 
 local function update(dt)
   cannon2.coolDownTime = cannon2.coolDownTime - 1
+  cannon1.coolDownTime = cannon1.coolDownTime - 1
   
   --COUNTDOWN
   remainingTime = remainingTime - dt 
@@ -281,16 +282,54 @@ local function update(dt)
   end
   --//////////Spieler rechts schießen///////////////////
   if love.keyboard.isDown("m") then
-    if cannon1.speed < playgroundWidth then
-      cannon1.speed = cannon1.speed + 30
+    startX, startY = abschussPosition1(cannon1)
+    dx, dy = abschussVektor1(cannon1)
+    
+    if cannon1.coolDownTime < 0 then
+      if cannon1.weapon == "default" then
+        cannon1.coolDownTime = 40
+        table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+        bang:play()
+      elseif cannon1.weapon == "laser" then
+        cannon1.coolDownTime = laser.coolDownTime
+        table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+        laserSound:play()
+      --cannon2.speed = playgroundWidth / 3
+      end
+    end
+  elseif love.keyboard.isDown("n") then
+    startX, startY = abschussPosition1(cannon1)
+    dx, dy = abschussVektor1(cannon1)
+    
+    if cannon1.coolDownTime < 0 then
+      if cannon1.weapon == "default" then
+        cannon1.coolDownTime = 40
+        table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+        bang:play()
+      elseif cannon1.weapon == "laser" then
+        cannon1.coolDownTime = laser.coolDownTime
+        table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
+        table.insert(bullets1, {x = startX, y = startY, dx = dx+20, dy = dy+20})
+        table.insert(bullets1, {x = startX, y = startY, dx = dx+40, dy = dy+40})
+        laserSound:play()
+      --cannon2.speed = playgroundWidth / 3
+      end
     end
   end
 
   --////////////Spieler links bewegen///////////////////
   if love.keyboard.isDown("a") then
+    if cannon2.weapon == "default" then
     cannon2.rotation = cannon2.rotation - deg2rad(2)
+    elseif cannon2.weapon == "laser" then
+    cannon2.rotation = cannon2.rotation - deg2rad(4)
+    end
   elseif love.keyboard.isDown("d") then
+    if cannon2.weapon == "default" then
     cannon2.rotation = cannon2.rotation + deg2rad(2)
+    elseif cannon2.weapon == "laser" then
+    cannon2.rotation = cannon2.rotation + deg2rad(4)
+    end
   end
   
   --//////////Spieler links schießen//////////////////
@@ -330,17 +369,17 @@ local function update(dt)
     end
   end
 
-  --/////////////Kanonenkugeln bei Kollision entfernen//////////////////
+
   for i,v in ipairs(bullets1) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
     v.dy = v.dy + 2
-
+    
+  --/////////////Kanonenkugeln bei Kollision entfernen//////////////////
     if checkCollision(v, 1) then 
       --addExplosion(v.x, v.y)
       table.remove(bullets1, i)
     end
-
   end
 
   for i,v in ipairs(bullets2) do
