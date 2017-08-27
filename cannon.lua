@@ -102,6 +102,7 @@ function setLaser(cannon)
   cannon.coolDownTime = lItem.coolDownTime
   cannon.shootSprite = lItem.shootSprite
   cannon.timer = lItem.timer
+  cannon.item = "laser"
 end
 
 function setDefault(cannon)
@@ -109,6 +110,7 @@ function setDefault(cannon)
   cannon.weapon = "default"
   cannon.coolDownTime = 60
   cannon.timer = 0
+  cannon.item = "none"
   if cannon.name == "cannon1" then
     cannon.left = "left"
     cannon.right = "right"
@@ -255,7 +257,8 @@ local function load()
     left = "left",
     right = "right",
     shoot = "m",
-    timer = 0
+    timer = 0,
+    item = "none"
   }
   cannon2 = {
     name = "cannon2",
@@ -278,7 +281,8 @@ local function load()
     left = "a",
     right = "d",
     shoot = "f",
-    timer = 0
+    timer = 0,
+    item = "none"
   }
   
   laserItem = {
@@ -536,12 +540,18 @@ local function draw()
   
   --Item Countdown
   if cannon1.timer > 0 then
-    love.graphics.print(math.floor(cannon1.timer), 100, playgroundHeight - 400)
+    love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 160, playgroundHeight - 400)
+    if cannon1.item == "laser" then
+      love.graphics.draw(laserItem.sprite, playgroundWidth - (laserItem.sprite:getWidth()+10), playgroundHeight - 400)
+    end
     love.graphics.setColor(255,255,255)
   end
   
   if cannon2.timer > 0 then
-    love.graphics.print(math.floor(cannon2.timer), playgroundWidth - 100, playgroundHeight - 400)
+    love.graphics.print(math.floor(cannon2.timer), 120, playgroundHeight - 400)
+    if cannon2.item == "laser" then
+      love.graphics.draw(laserItem.sprite, 10, playgroundHeight - 400)
+    end
     love.graphics.setColor(255,255,255)
   end
       
