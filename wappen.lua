@@ -55,6 +55,7 @@ local function load()
   changeItem = {
     typ = "item",
     name = "change",
+    timer = 5,
     sprite = love.graphics.newImage("items/wechsel.png")
   }
   
@@ -182,7 +183,7 @@ local function draw()
 end
 
 wappen.allTargets = allTargets
---wappen.laserItem = laserItem
+wappen.laserItem = laserItem
 wappen.load = load
 wappen.update = update
 wappen.draw = draw

@@ -75,10 +75,18 @@ function checkCollision(ball, cnr)
         
       elseif v.correct == "laser" then
           if cnr == 1 then
-            setLaser(cannon1)
+            laserOn(cannon1)
           else 
-            setLaser(cannon2)
+            laserOn(cannon2)
           end
+      
+      elseif v.correct == "change" then
+        if cnr == 1 then
+          changeOn(cannon2)
+        else
+          changeOn(cannon1)
+        end
+        
       end
 
       love.audio.play(alarm)
@@ -95,7 +103,27 @@ function checkCollision(ball, cnr)
   return false
 end
 
-function setLaser(cannon) 
+function changeOn(cannon)
+  left = cannon.left
+  right = cannon.right
+  
+  cannon.left = right
+  cannon.right = left
+  cannon.timer2 = changeItem.timer
+  cannon.item2 = "change"
+end
+function changeOff(cannon)
+  left = cannon.left
+  right = cannon.right
+  
+  cannon.left = right
+  cannon.right = left
+  cannon.timer2 = 0
+  cannon.item2 = "none"
+end
+
+
+function laserOn(cannon) 
   lItem = laserItem
   cannon.speed = lItem.speed
   cannon.weapon = lItem.weapon
@@ -103,6 +131,18 @@ function setLaser(cannon)
   cannon.shootSprite = lItem.shootSprite
   cannon.timer = lItem.timer
   cannon.item = "laser"
+end
+function laserOff(cannon) 
+  cannon.speed = 600
+  cannon.weapon = "default"
+  cannon.coolDownTime = 60
+  cannon.timer = 0
+  cannon.item = "none"
+  if cannon.name == "cannon1" then
+    cannon.shootSprite = cannonball1
+  else
+    cannon.shootSprite = cannonball2
+  end
 end
 
 function setDefault(cannon)
@@ -236,6 +276,7 @@ local function load()
   cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
   cannon1sprite  = love.graphics.newImage("cannon/cannon1.png")
   cannon2sprite  = love.graphics.newImage("cannon/cannon2.png")
+  
   cannon1 = {
     name = "cannon1",
     cannonSprite = love.graphics.newImage("cannon/cannon1.png"),
@@ -258,7 +299,11 @@ local function load()
     right = "right",
     shoot = "m",
     timer = 0,
-    item = "none"
+    timer2 = 0,
+    timer3 = 0,
+    timer4 = 0,
+    item = "none",
+    item2 = "none"
   }
   cannon2 = {
     name = "cannon2",
@@ -282,7 +327,11 @@ local function load()
     right = "d",
     shoot = "f",
     timer = 0,
-    item = "none"
+    timer2 = 0,
+    timer3 = 0,
+    timer4 = 0,
+    item = "none",
+    item2 = "none"
   }
   
   laserItem = {
@@ -293,7 +342,14 @@ local function load()
     weapon = "laser",
     coolDownTime = 10,
     shootSprite = love.graphics.newImage("cannon/laser.png"),
-    timer = 5
+    timer = 10
+  }
+  
+  changeItem = {
+    typ = "item",
+    name = "change",
+    timer = 10,
+    sprite = love.graphics.newImage("items/wechsel.png")
   }
 end
 
@@ -301,18 +357,27 @@ local function update(dt)
   cannon2.coolDownTime = cannon2.coolDownTime - 1 
   cannon1.coolDownTime = cannon1.coolDownTime - 1
   
-  --Timer für Items festlegen
-    if cannon1.timer > 0 then
-      cannon1.timer = cannon1.timer - dt
-    elseif cannon1.timer < 0 then
-      setDefault(cannon1)
+  --Timer für Laser Item
+  function laserTimer(cannon) 
+    if cannon.timer > 0 then
+      cannon.timer = cannon.timer - dt
+    elseif cannon.timer < 0 then
+      laserOff(cannon)
     end
-    
-    if cannon2.timer > 0 then
-      cannon2.timer = cannon2.timer - dt
-    elseif cannon2.timer < 0 then
-      setDefault(cannon2)
+  end
+  laserTimer(cannon1)
+  laserTimer(cannon2)
+  
+  --Timer für Change Item 
+  function changeTimer(cannon) 
+    if cannon.timer2 > 0 then
+      cannon.timer2 = cannon.timer2 - dt
+    elseif cannon.timer2 < 0 then
+      changeOff(cannon)
     end
+  end
+  changeTimer(cannon1)
+  changeTimer(cannon2)
     
   
   --COUNTDOWN
@@ -539,18 +604,27 @@ local function draw()
   end
   
   --Item Countdown
-  if cannon1.timer > 0 then
-    love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 160, playgroundHeight - 400)
+  if cannon1.timer > 0 or cannon1.timer2 > 0 then
     if cannon1.item == "laser" then
+      love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 160, playgroundHeight - 400)
       love.graphics.draw(laserItem.sprite, playgroundWidth - (laserItem.sprite:getWidth()+10), playgroundHeight - 400)
+    end
+    
+    if cannon1.item2 == "change" then
+      love.graphics.print(math.floor(cannon1.timer2), playgroundWidth - 160, playgroundHeight - 500)
+      love.graphics.draw(changeItem.sprite, playgroundWidth - (changeItem.sprite:getWidth()+10), playgroundHeight - 500)
     end
     love.graphics.setColor(255,255,255)
   end
   
-  if cannon2.timer > 0 then
-    love.graphics.print(math.floor(cannon2.timer), 120, playgroundHeight - 400)
+  if cannon2.timer > 0 or cannon2.timer2 > 0 then
     if cannon2.item == "laser" then
+      love.graphics.print(math.floor(cannon2.timer), 120, playgroundHeight - 400)
       love.graphics.draw(laserItem.sprite, 10, playgroundHeight - 400)
+    end
+    if cannon2.item2 == "change" then
+      love.graphics.print(math.floor(cannon2.timer2), 120, playgroundHeight - 500)
+      love.graphics.draw(changeItem.sprite, 10, playgroundHeight - 500)
     end
     love.graphics.setColor(255,255,255)
   end
