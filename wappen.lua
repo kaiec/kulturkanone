@@ -78,11 +78,11 @@ local function load()
     target.targetHeight = 75
     target.targetWidth = 75
     target.targetY = love.math.random(0, (playingAreaHeight/2))
-    --target.speed = 250
+    
     randomNumber = love.math.random(1,100)
     target.timer = love.math.random(2,4)
     
-    --target.speedi = love.math.random(-100, 100)
+    
     target.targetX = love.math.random(0, (playingAreaWidth)-(target.targetWidth))
     
     if randomNumber <= 40 then
@@ -114,8 +114,8 @@ function getBoundingBoxWappen(v)
 end
 
 local function update(dt)
+  --Der TargetTimer prüft alle 1-2 Sek. ob Wappen neu erzeugt werden können.
    newTargetTimer = newTargetTimer -dt
-   
    if newTargetTimer <= 0 then
      if #allTargets < 4 then
       createTarget()
@@ -123,6 +123,7 @@ local function update(dt)
     newTargetTimer = love.math.random(1,2)
   end
   
+  --Zu Beginn werden 4 Wappen/Items erzeugt
   if initial == 0 then
     i = 0
     while i < 4 do
@@ -132,16 +133,14 @@ local function update(dt)
     initial = 1
   end  
   
+  --Jedes Wappen/Item hat einen Timer, der herunterzählt und das Objekt aus dem Array entfernt, wenn der Timer bei 0 ist.
   for i,v in ipairs(allTargets) do
-    
     v.timer = v.timer -dt
     
       --Die Bewegung der Objekte von Rechts nach Links
         --if v.targetX > (playingAreaWidth/2) and v.targetY < 1 then
         --v.targetX = v.targetX - v.speed * dt
         --end
-      
-    
         if v.timer < 0 then
             table.remove(allTargets, i)
           end
