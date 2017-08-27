@@ -5,8 +5,10 @@ local laserItem = {}
   
 local function load()
   
+  initial = 0
   playingAreaWidth = love.graphics.getWidth()
   playingAreaHeight = love.graphics.getHeight()
+  newTargetTimer = 3
   
   images = {}
   table.insert(images, love.graphics.newImage("crest/105px-Wappen-stuttgart-vaihingen-stadtbezirk.png"))
@@ -75,12 +77,13 @@ local function load()
    target = {} 
     target.targetHeight = 75
     target.targetWidth = 75
-    target.targetY = 0
-    target.speed = 250
+    target.targetY = love.math.random(0, (playingAreaHeight/2))
+    --target.speed = 250
     randomNumber = love.math.random(1,100)
+    target.timer = love.math.random(2,4)
     
-    target.speedi = love.math.random(-100, 100)
-    target.targetX = (playingAreaWidth)-(target.targetWidth/2)
+    --target.speedi = love.math.random(-100, 100)
+    target.targetX = love.math.random(0, (playingAreaWidth)-(target.targetWidth))
     
     if randomNumber <= 40 then
       target.image = wrongs[love.math.random(1, #wrongs)]
@@ -93,11 +96,7 @@ local function load()
       target.image = items[randomItem].sprite
       target.correct = items[randomItem].name
     end
-    target.point1Y = love.math.random(0, playingAreaHeight)
-    target.point2Y = love.math.random(0, playingAreaHeight)
-    target.point3Y = love.math.random(0, playingAreaHeight)
-    target.point4Y = love.math.random(0, playingAreaHeight)
-    target.point5Y = love.math.random(playingAreaHeight/2, playingAreaHeight)
+    
     
     table.insert(allTargets, target)
   end 
@@ -115,46 +114,35 @@ function getBoundingBoxWappen(v)
 end
 
 local function update(dt)
+   newTargetTimer = newTargetTimer -dt
    
-    
+   if newTargetTimer <= 0 then
+     if #allTargets < 4 then
+      createTarget()
+     end
+    newTargetTimer = love.math.random(1,2)
+  end
+  
+  if initial == 0 then
+    i = 0
+    while i < 4 do
+      createTarget()
+      i = i +1
+    end
+    initial = 1
+  end  
   
   for i,v in ipairs(allTargets) do
     
+    v.timer = v.timer -dt
     
       --Die Bewegung der Objekte von Rechts nach Links
-        if v.targetX > (playingAreaWidth/2) and v.targetY < 1 then
-        v.targetX = v.targetX - v.speed * dt
-        end
+        --if v.targetX > (playingAreaWidth/2) and v.targetY < 1 then
+        --v.targetX = v.targetX - v.speed * dt
+        --end
       
-      --Die Objekte erreichen den Mittelpunkt des Windows
-        if v.targetX <= playingAreaWidth/2 then
-        v.targetY = v.targetY + v.speed * dt
-      end
-      
-      --Erzeugen des zweiten Objektes
-      if v.targetX < playingAreaWidth - 250 then
-        if #allTargets<2 then
-        createTarget()
-      end
-    end
     
-    --Erzeugen des dritten Objektes
-    if v.targetY > v.point3Y then
-      if #allTargets<3 then
-        createTarget()
-      end
-    end
-    
-    --Erzeugen des vierten Objektes
-    if v.targetY > v.point2Y then
-      if #allTargets<4 then
-        createTarget()
-      end
-      end
-      
-      
-      
-        if v.targetY > playingAreaHeight then
+        if v.timer < 0 then
             table.remove(allTargets, i)
           end
     end
