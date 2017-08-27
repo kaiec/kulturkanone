@@ -1,6 +1,7 @@
 
 local wappen = {}
 local allTargets = {}
+local laserItem = {}
   
 local function load()
   
@@ -33,6 +34,35 @@ local function load()
   table.insert(wrongs, love.graphics.newImage("crest/wrong/150px-Wappen_Waldstadt.png"))
   table.insert(wrongs, love.graphics.newImage("crest/wrong/154px-Wappen_Karlsruher_Suedtstadt.png"))
   table.insert(wrongs, love.graphics.newImage("crest/wrong/148px-Wappen_Karlsruher_Nordweststadt.png"))
+  
+ 
+  
+  
+  changeSprite = love.graphics.newImage("items/wechsel.png")
+  
+  
+  laserItem = {
+    typ = "item",
+    name = "laser",
+    sprite = love.graphics.newImage("items/blitz.png"),
+    speed = 1000,
+    weapon = "laser",
+    coolDownTime = 10,
+    shootSprite = love.graphics.newImage("cannon/laser.png"),
+    timer = 5
+  }
+  
+  changeItem = {
+    typ = "item",
+    name = "change",
+    sprite = love.graphics.newImage("items/wechsel.png")
+  }
+  
+  items = {}
+  table.insert(items, laserItem)
+  table.insert(items, changeItem)
+    
+    
 
   
   
@@ -46,15 +76,21 @@ local function load()
     target.targetWidth = 75
     target.targetY = 0
     target.speed = 250
+    randomNumber = love.math.random(1,100)
     
     target.speedi = love.math.random(-100, 100)
     target.targetX = (playingAreaWidth)-(target.targetWidth/2)
-    if love.math.random(1,10)>5 then
+    
+    if randomNumber <= 40 then
       target.image = wrongs[love.math.random(1, #wrongs)]
-      target.correct = false
-    else
+      target.correct = "false"
+    elseif randomNumber > 40  and randomNumber <= 80 then
       target.image = images[love.math.random(1, #images)]
-      target.correct = true
+      target.correct = "true"
+    elseif randomNumber  > 80 then
+      randomItem = love.math.random(1, #items)
+      target.image = items[randomItem].sprite
+      target.correct = items[randomItem].name
     end
     target.point1Y = love.math.random(0, playingAreaHeight)
     target.point2Y = love.math.random(0, playingAreaHeight)
@@ -138,6 +174,7 @@ local function draw()
  end
  
  
+ 
  if #allTargets < 1 then
    createTarget()
    
@@ -145,6 +182,7 @@ local function draw()
 end
 
 wappen.allTargets = allTargets
+--wappen.laserItem = laserItem
 wappen.load = load
 wappen.update = update
 wappen.draw = draw

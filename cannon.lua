@@ -5,6 +5,7 @@ local wappen = require('wappen')
 local background
 local brett
 
+
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
 
@@ -58,18 +59,26 @@ function checkCollision(ball, cnr)
       ball_bottom < v_top
       ) then
 
-      if v.correct == true then
+      if v.correct == "true" then
         if cnr == 1 then
           score1 = score1 + 1
         else
           score2 = score2 + 1
         end
-      else
+        
+      elseif v.correct == "false" then
         if cnr == 1 then
           score1 = score1 - 1
         else
           score2 = score2 - 1
         end
+        
+      elseif v.correct == "laser" then
+          if cnr == 1 then
+            setLaser(cannon1)
+          else 
+            setLaser(cannon2)
+          end
       end
 
       love.audio.play(alarm)
@@ -85,6 +94,35 @@ function checkCollision(ball, cnr)
   end
   return false
 end
+
+function setLaser(cannon) 
+  lItem = laserItem
+  cannon.speed = lItem.speed
+  cannon.weapon = lItem.weapon
+  cannon.coolDownTime = lItem.coolDownTime
+  cannon.shootSprite = lItem.shootSprite
+  cannon.timer = lItem.timer
+end
+
+function setDefault(cannon)
+  cannon.speed = 600
+  cannon.weapon = "default"
+  cannon.coolDownTime = 60
+  cannon.timer = 0
+  if cannon.name == "cannon1" then
+    cannon.left = "left"
+    cannon.right = "right"
+    cannon.shoot = "m"
+    cannon.shootSprite = cannonball1
+  else
+    cannon.left = "a"
+    cannon.right = "d"
+    cannon.shoot = "f"
+    cannon.shootSprite = cannonball2
+  end
+end
+
+  
 
 
 function deg2rad(deg)
@@ -176,8 +214,7 @@ local function load()
   background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
   brett = love.graphics.newImage("background/brett-anzeige.png")
   endScreen = love.graphics.newImage("background/game over.png")
-  cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
-  cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
+ 
 
   playgroundWidth = love.graphics.getWidth()
   playgroundHeight = love.graphics.getHeight()
@@ -187,16 +224,20 @@ local function load()
   bulletSpeed = 400
   bullets1 = {}
   bullets2 = {}
-  cannon1sprite  = love.graphics.newImage("cannon/cannon1.png")
-  cannon2sprite  = love.graphics.newImage("cannon/cannon2.png")
 
   rotation1 = 0
   rotation2 = 0
 
   love.keyboard.setKeyRepeat(false)
 
+  cannonball1 = love.graphics.newImage("cannon/cannonball1.png")
+  cannonball2 = love.graphics.newImage("cannon/cannonball2.png")
+  cannon1sprite  = love.graphics.newImage("cannon/cannon1.png")
+  cannon2sprite  = love.graphics.newImage("cannon/cannon2.png")
   cannon1 = {
-    sprite = cannon1sprite, 
+    name = "cannon1",
+    cannonSprite = love.graphics.newImage("cannon/cannon1.png"),
+    shootSprite = love.graphics.newImage("cannon/cannonball1.png"),
     x = playgroundWidth - 150, 
     y = playgroundHeight - 50, 
     width = cannon1sprite:getWidth(), 
@@ -210,10 +251,16 @@ local function load()
     ky = 19,
     speed = 600,
     weapon = "default",
-    coolDownTime = 60
+    coolDownTime = 0,
+    left = "left",
+    right = "right",
+    shoot = "m",
+    timer = 0
   }
   cannon2 = {
-    sprite = cannon2sprite, 
+    name = "cannon2",
+    cannonSprite = love.graphics.newImage("cannon/cannon2.png"),
+    shootSprite = love.graphics.newImage("cannon/cannonball2.png"),
     x = 100, 
     y = playgroundHeight - 50, 
     width = cannon2sprite:getWidth(), 
@@ -227,26 +274,42 @@ local function load()
     ky = 25,
     speed = 600,
     weapon = "default",
-    coolDownTime = 60
+    coolDownTime = 0,
+    left = "a",
+    right = "d",
+    shoot = "f",
+    timer = 0
   }
-
-  laser = {
+  
+  laserItem = {
+    typ = "item",
+    name = "laser",
+    sprite = love.graphics.newImage("items/blitz.png"),
     speed = 1000,
     weapon = "laser",
     coolDownTime = 10,
-    sprite = love.graphics.newImage("cannon/laser.png")
-  
+    shootSprite = love.graphics.newImage("cannon/laser.png"),
+    timer = 5
   }
-  cannon2.speed = laser.speed
-  cannon2.weapon = laser.weapon
-  cannon2.coolDownTime = laser.coolDownTime
-
-
 end
 
 local function update(dt)
-  cannon2.coolDownTime = cannon2.coolDownTime - 1
+  cannon2.coolDownTime = cannon2.coolDownTime - 1 
   cannon1.coolDownTime = cannon1.coolDownTime - 1
+  
+  --Timer für Items festlegen
+    if cannon1.timer > 0 then
+      cannon1.timer = cannon1.timer - dt
+    elseif cannon1.timer < 0 then
+      setDefault(cannon1)
+    end
+    
+    if cannon2.timer > 0 then
+      cannon2.timer = cannon2.timer - dt
+    elseif cannon2.timer < 0 then
+      setDefault(cannon2)
+    end
+    
   
   --COUNTDOWN
   remainingTime = remainingTime - dt 
@@ -275,23 +338,23 @@ local function update(dt)
   --////////////////////////
 
   --///////////Spieler rechts bewegen///////////////////
-  if love.keyboard.isDown("left") then
+  if love.keyboard.isDown(cannon1.left) then
     cannon1.rotation = cannon1.rotation - deg2rad(2)
-  elseif love.keyboard.isDown("right") then
+  elseif love.keyboard.isDown(cannon1.right) then
     cannon1.rotation = cannon1.rotation + deg2rad(2)
   end
   --//////////Spieler rechts schießen///////////////////
-  if love.keyboard.isDown("m") then
+  if love.keyboard.isDown(cannon1.shoot) then
     startX, startY = abschussPosition1(cannon1)
     dx, dy = abschussVektor1(cannon1)
     
-    if cannon1.coolDownTime < 0 then
+    if cannon1.coolDownTime <= 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 40
+        cannon1.coolDownTime = 60
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
-        cannon1.coolDownTime = laser.coolDownTime
+        cannon1.coolDownTime = laserItem.coolDownTime
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         laserSound:play()
       --cannon2.speed = playgroundWidth / 3
@@ -303,11 +366,11 @@ local function update(dt)
     
     if cannon1.coolDownTime < 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 40
+        cannon1.coolDownTime = 80
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
-        cannon1.coolDownTime = laser.coolDownTime
+        cannon1.coolDownTime = laserItem.coolDownTime
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         table.insert(bullets1, {x = startX, y = startY, dx = dx+20, dy = dy+20})
         table.insert(bullets1, {x = startX, y = startY, dx = dx+40, dy = dy+40})
@@ -318,13 +381,13 @@ local function update(dt)
   end
 
   --////////////Spieler links bewegen///////////////////
-  if love.keyboard.isDown("a") then
+  if love.keyboard.isDown(cannon2.left) then
     if cannon2.weapon == "default" then
     cannon2.rotation = cannon2.rotation - deg2rad(2)
     elseif cannon2.weapon == "laser" then
     cannon2.rotation = cannon2.rotation - deg2rad(4)
     end
-  elseif love.keyboard.isDown("d") then
+  elseif love.keyboard.isDown(cannon2.right) then
     if cannon2.weapon == "default" then
     cannon2.rotation = cannon2.rotation + deg2rad(2)
     elseif cannon2.weapon == "laser" then
@@ -333,17 +396,17 @@ local function update(dt)
   end
   
   --//////////Spieler links schießen//////////////////
-  if love.keyboard.isDown("f") then
+  if love.keyboard.isDown(cannon2.shoot) then
     startX, startY = abschussPosition2(cannon2)
     dx, dy = abschussVektor2(cannon2)
     
-    if cannon2.coolDownTime < 0 then
+    if cannon2.coolDownTime <= 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 40
+        cannon2.coolDownTime = 80
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
-        cannon2.coolDownTime = laser.coolDownTime
+        cannon2.coolDownTime = laserItem.coolDownTime
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         laserSound:play()
       --cannon2.speed = playgroundWidth / 3
@@ -355,7 +418,7 @@ local function update(dt)
     
     if cannon2.coolDownTime < 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 40
+        cannon2.coolDownTime = 80
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
@@ -373,7 +436,11 @@ local function update(dt)
   for i,v in ipairs(bullets1) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
-    v.dy = v.dy + 2
+    if cannon1.weapon == "default" then
+      v.dy = v.dy + 4
+    elseif cannon1.weapon == "laser" then
+      v.dy = v.dy + 0
+    end
     
   --/////////////Kanonenkugeln bei Kollision entfernen//////////////////
     if checkCollision(v, 1) then 
@@ -385,8 +452,8 @@ local function update(dt)
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
-    if cannon2.wepaon == "default" then
-      v.dy = v.dy + 2
+    if cannon2.weapon == "default" then
+      v.dy = v.dy + 4
     elseif cannon2.weapon == "laser" then
       v.dy = v.dy + 0
     end
@@ -405,9 +472,10 @@ local function draw()
 --    love.graphics.getHeight() / background:getHeight())
   love.graphics.setColor(255, 255, 255)
   --love.graphics.rectangle("fill",  player.x, player.y, player.width, player.height)
-  love.graphics.draw(cannon1.sprite, cannon1.x, cannon1.y, cannon1.rotation, 0.7, 0.7, cannon1.ox, cannon1.oy) 
-  love.graphics.draw(cannon2.sprite, cannon2.x, cannon2.y, cannon2.rotation, 0.7, 0.7, cannon2.ox, cannon2.oy) 
+  love.graphics.draw(cannon1.cannonSprite, cannon1.x, cannon1.y, cannon1.rotation, 0.7, 0.7, cannon1.ox, cannon1.oy) 
+  love.graphics.draw(cannon2.cannonSprite, cannon2.x, cannon2.y, cannon2.rotation, 0.7, 0.7, cannon2.ox, cannon2.oy) 
   love.graphics.setColor(255, 0, 0)
+  --love.graphics.draw(wappen.changeSprite, 100, 100)
 
   --love.graphics.circle("fill", cannon2.x, cannon2.y, 4)
   --startX, startY = abschussPosition2(cannon2)
@@ -426,26 +494,19 @@ local function draw()
 
   love.graphics.setColor(255, 255, 255)
   for i,v in ipairs(bullets1) do
-    --love.graphics.circle("fill", v.x, v.y, 8)
-    love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, cannonball1:getWidth()/2, cannonball1:getWidth()/2)
-    -- love.graphics.circle("fill",v.x, v.y, 4)
-    -- b_left, b_top, b_width, b_height = getBoundingBoxBall(v)
-    -- love.graphics.rectangle("line", b_left, b_top, b_width, b_height)
+    love.graphics.draw(cannon1.shootSprite, v.x, v.y, 0, 1, 1, cannon1.shootSprite:getWidth()/2, cannon1.shootSprite:getWidth()/2)
+    
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
     or v.y > playgroundHeight then
       table.remove(bullets1, i)
     end
-
   end
+  
   for i,v in ipairs(bullets2) do
-    --love.graphics.circle("fill", v.x, v.y, 8)
-    if cannon2.weapon == "default" then
-      love.graphics.draw(cannonball1, v.x, v.y, 0, 1, 1, laser.sprite:getWidth()/2, laser.sprite:getWidth()/2)
-    elseif cannon2.weapon =="laser" then
-      love.graphics.draw(laser.sprite, v.x, v.y, 0, 1, 1, laser.sprite:getWidth()/2, laser.sprite:getWidth()/2)
-    end
+    love.graphics.draw(cannon2.shootSprite, v.x, v.y, 0, 1, 1, cannon2.shootSprite:getWidth()/2, cannon2.shootSprite:getWidth()/2)
+    
     if v.x < 0 
     or v.y < 0 
     or v.x > playgroundWidth
@@ -464,17 +525,31 @@ local function draw()
   love.graphics.print(score1, playgroundWidth - 400, playgroundHeight - 100)
   love.graphics.print(score2, 400, playgroundHeight - 100)
   
-  --COUNTDOWN
+  --Game Countdown
   love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
   love.graphics.setColor(255,255,255)
-
+  
   if remainingTime < 11 and countdownIsOn == false then
     love.audio.play(countdownAlarm)
     countdownIsOn = true
   end
   
-  love.graphics.rectangle("fill", playgroundWidth - 100, playgroundHeight - 200, 20, -(cannon1.speed/2) + ((playgroundWidth/6)/2))
-  love.graphics.rectangle("fill", 100, playgroundHeight - 200, 20, -(cannon2.speed/2)+ ((playgroundWidth/6)/2))
+  --Item Countdown
+  if cannon1.timer > 0 then
+    love.graphics.print(math.floor(cannon1.timer), 100, playgroundHeight - 400)
+    love.graphics.setColor(255,255,255)
+  end
+  
+  if cannon2.timer > 0 then
+    love.graphics.print(math.floor(cannon2.timer), playgroundWidth - 100, playgroundHeight - 400)
+    love.graphics.setColor(255,255,255)
+  end
+      
+
+  
+  
+--  love.graphics.rectangle("fill", playgroundWidth - 100, playgroundHeight - 200, 20, -(cannon1.speed/2) + ((      playgroundWidth/6)/2))
+--  love.graphics.rectangle("fill", 100, playgroundHeight - 200, 20, -(cannon2.speed/2)+ ((playgroundWidth/6)/2))
 end
 
 --function love.keyreleased(key)
