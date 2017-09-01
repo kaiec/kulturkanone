@@ -52,9 +52,9 @@ function checkCollision(ball, cnr)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
-  if ball_top < 120 then
-      return false
-  end
+--  if ball_top < 120 then
+--      return false
+--  end
   
   local t = wappen.allTargets
   for i = #t, 1, -1 do
@@ -98,27 +98,27 @@ function checkCollision(ball, cnr)
       elseif v.correct == "laser" then
           if cnr == 1 then
             laserOn(cannon1)
-            point1.goal = "none"
+            point1.goal = "laser"
           else 
             laserOn(cannon2)
-            point2.goal = "none"
+            point2.goal = "laser"
           end
       
       elseif v.correct == "change" then
         if cnr == 1 then
           changeOn(cannon2)
-          point1.goal = "none"
+          point1.goal = "change"
         else
           changeOn(cannon1)
-          point2.goal = "none"
+          point2.goal = "change"
         end
       elseif v.correct == "double" then
         if cnr == 1 then
           doubleOn(cannon1)
-          point1.goal = "none"
+          point1.goal = "double"
         else
           doubleOn(cannon2)
-          point2.goal = "none"
+          point2.goal = "double"
         end
       end
 
@@ -276,7 +276,9 @@ end
 local function load()
   score1 = 0
   score2 = 0
-  font = love.graphics.newFont("fonts/carbon.ttf", 70)
+  carbonFont = love.graphics.newFont("fonts/carbon.ttf", 70)
+  defaultFont = love.graphics.newFont(70)
+  
   
   --COUNTDOWN
   remainingTime = 100
@@ -299,9 +301,9 @@ local function load()
 --bang:setVolume(0.7)
 
 
-  background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
+  background = love.graphics.newImage("background/Hintergrund-Stuttgart-flach.jpg")
   brett = love.graphics.newImage("background/brett-anzeige.png")
-  endScreen = love.graphics.newImage("background/game over.png")
+  endScreen = love.graphics.newImage("background/game-over.png")
  
 
   playgroundWidth = love.graphics.getWidth()
@@ -419,8 +421,12 @@ end
 radiusC = 20
 local function update(dt)
   
+  --Countdown für die Punkte bei Abschuss eines Wappen oder Item
   if point1.t > 0 then
     point1.t = point1.t - dt
+  end
+  if point2.t > 0 then
+    point2.t = point2.t - dt
   end
   
   radiusC = radiusC + 1
@@ -456,8 +462,8 @@ local function update(dt)
       doubleOff(cannon)
     end
   end
-  changeTimer(cannon1)
-  changeTimer(cannon2)
+  doubleTimer(cannon1)
+  doubleTimer(cannon2)
     
   
   --COUNTDOWN
@@ -605,7 +611,7 @@ local function update(dt)
       point1.y = v.y
       point1.t = 1
       --addExplosion(v.x, v.y)
-      --table.remove(bullets1, i)
+      table.remove(bullets1, i)
     end
   end
 
@@ -619,7 +625,9 @@ local function update(dt)
     end
 
     if checkCollision(v, 2) then
-     
+     point2.x = v.x
+      point2.y = v.y
+      point2.t = 1
       table.remove(bullets2, i)
     end
   end
@@ -681,7 +689,7 @@ local function draw()
   love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 
     1.2 * screenscale, 1 * screenscale)
     
-  love.graphics.setFont(font)
+  love.graphics.setFont(carbonFont)
   love.graphics.setColor(0,0,0)
   love.graphics.print(score1, playgroundWidth - 400, playgroundHeight - 100)
   love.graphics.print(score2, 400, playgroundHeight - 100)
@@ -696,7 +704,7 @@ local function draw()
   end
   
   --Item Countdown
-  if cannon1.timer > 0 or cannon1.timer2 > 0 then
+  if cannon1.timer > 0 or cannon1.timer2 > 0 or cannon1.timer3 > 0  then
     if cannon1.item == "laser" then
       love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 160, playgroundHeight - 400)
       love.graphics.draw(laserItem.sprite, playgroundWidth - (laserItem.sprite:getWidth()+10), playgroundHeight - 400)
@@ -706,13 +714,13 @@ local function draw()
       love.graphics.draw(changeItem.sprite, playgroundWidth - (changeItem.sprite:getWidth()+10), playgroundHeight - 500)
     end
     if cannon1.item3 == "double" then
-      love.graphics.print(math.floor(cannon1.timer3), 120, playgroundHeight - 300)
+      love.graphics.print(math.floor(cannon1.timer3), playgroundWidth - 160, playgroundHeight - 300)
       love.graphics.draw(doubleItem.sprite, playgroundWidth - (changeItem.sprite:getWidth()+10), playgroundHeight - 300)
     end
     love.graphics.setColor(255,255,255)
   end
   
-  if cannon2.timer > 0 or cannon2.timer2 > 0 then
+  if cannon2.timer > 0 or cannon2.timer2 > 0 or cannon2.timer3 > 0 then
     if cannon2.item == "laser" then
       love.graphics.print(math.floor(cannon2.timer), 120, playgroundHeight - 400)
       love.graphics.draw(laserItem.sprite, 10, playgroundHeight - 400)
@@ -729,17 +737,47 @@ local function draw()
   end
   
   love.graphics.circle("line", 200, 200, radiusC)
+  love.graphics.setFont(defaultFont)
   
   --Punkte bei Abschuss anzeigen
   if point1.x > 0 and point1.y > 0 and point1.t > 0 then
     if point1.goal == "true" then
-      love.graphics.print("true", point1.x, point1.y)
+      love.graphics.print("+", point1.x-50, point1.y-50)
+      love.graphics.print(cannon1.multiplier, point1.x, point1.y-50)
       love.graphics.setColor(255,255,255)
     elseif point1.goal == "false" then
-      love.graphics.print("false", point1.x, point1.y)
+      love.graphics.print("-", point1.x-50, point1.y-50)
+       love.graphics.print(cannon1.multiplier, point1.x-20, point1.y-50)
       love.graphics.setColor(255,255,255)
-    elseif point1.goal == "none" then
-      love.graphics.print("bonus", point1.x, point1.y)
+    elseif point1.goal == "laser" then
+      love.graphics.print("laser", point1.x-50, point1.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point1.goal == "change" then
+      love.graphics.print("change", point1.x-50, point1.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point1.goal == "double" then
+      love.graphics.print("double", point1.x-50, point1.y-50)
+      love.graphics.setColor(255,255,255)
+    end
+  end
+  
+  if point2.x > 0 and point2.y > 0 and point2.t > 0 then
+    if point2.goal == "true" then
+      love.graphics.print("+", point2.x-50, point2.y-50)
+      love.graphics.print(cannon2.multiplier, point2.x, point2.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point2.goal == "false" then
+      love.graphics.print("-", point2.x-50, point2.y-50)
+       love.graphics.print(cannon2.multiplier, point2.x-20, point2.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point2.goal == "laser" then
+      love.graphics.print("laser", point2.x-50, point2.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point2.goal == "change" then
+      love.graphics.print("change", point2.x-50, point2.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point2.goal == "double" then
+      love.graphics.print("double", point2.x-50, point2.y-50)
       love.graphics.setColor(255,255,255)
     end
   end
