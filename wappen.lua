@@ -47,7 +47,8 @@ local function load()
     typ = "item",
     name = "laser",
     sprite = love.graphics.newImage("items/blitz.png"),
-    speed = 1000,
+    power = 1000,
+    speed = 4,
     weapon = "laser",
     coolDownTime = 10,
     shootSprite = love.graphics.newImage("cannon/laser.png"),
@@ -61,9 +62,18 @@ local function load()
     sprite = love.graphics.newImage("items/wechsel.png")
   }
   
+  doubleItem = {
+    typ = "item",
+    name = "double",
+    timer = 5,
+    sprite = love.graphics.newImage("items/doppel.png")
+  }
+  
+  
   items = {}
   table.insert(items, laserItem)
   table.insert(items, changeItem)
+  table.insert(items, doubleItem)
     
     
 
