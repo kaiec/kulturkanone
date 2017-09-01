@@ -145,16 +145,19 @@ local function update(dt)
   
   --Jedes Wappen/Item hat einen Timer, der herunterzählt und das Objekt aus dem Array entfernt, wenn der Timer bei 0 ist.
   for i,v in ipairs(allTargets) do
+    
     v.timer = v.timer -dt
     
-      --Die Bewegung der Objekte von Rechts nach Links
-        --if v.targetX > (playingAreaWidth/2) and v.targetY < 1 then
-        --v.targetX = v.targetX - v.speed * dt
-        --end
+
         if v.timer < 0 then
             table.remove(allTargets, i)
           end
     end
+    
+  if #allTargets < 1 then
+   createTarget()
+  end
+  
 end
 
     
@@ -173,10 +176,7 @@ local function draw()
  
  
  
- if #allTargets < 1 then
-   createTarget()
-   
-  end
+
 end
 
 wappen.allTargets = allTargets
@@ -185,5 +185,6 @@ wappen.load = load
 wappen.update = update
 wappen.draw = draw
 wappen.getBoundingBox = getBoundingBoxWappen
+
 
 return wappen
