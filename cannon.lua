@@ -736,7 +736,7 @@ local function draw()
     love.graphics.setColor(255,255,255)
   end
   
-  love.graphics.circle("line", 200, 200, radiusC)
+  --love.graphics.circle("line", 200, 200, radiusC)
   love.graphics.setFont(defaultFont)
   
   --Punkte bei Abschuss anzeigen
