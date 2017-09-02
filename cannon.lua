@@ -40,10 +40,6 @@ point2 = {
 
 
 
-
-
-
-
 function getBoundingBoxBall(ball)
   local ball_left = ball.x - cannonball1:getWidth() / 2
   local ball_right = ball_left + cannonball1:getWidth()
@@ -109,20 +105,43 @@ function checkCollision(ball, cnr)
       
       if v.correct == "true" then
         if cnr == 1 then
-          score1 = score1 + (1 * cannon1.multiplier)
-          point1.goal = "true"
-        else
-          score2 = score2 + (1 * cannon2.multiplier)
-          point2.goal = "true"
+          if cannon1.item4 == "switch" then
+            score1 = score1 - (1 * cannon1.multiplier)
+            point1.goal = "false"
+          else
+            score1 = score1 + (1 * cannon1.multiplier)
+            point1.goal = "true"
+          end
+          
+        elseif cnr == 2 then
+          if cannon2.item4 == "switch" then
+            score2 = score2 - (1 * cannon2.multiplier)
+            point2.goal = "false"
+          else
+            score2 = score2 + (1 * cannon2.multiplier)
+            point2.goal = "true"
+          end
         end
         
       elseif v.correct == "false" then
         if cnr == 1 then
-          score1 = score1 - (1 * cannon1.multiplier)
-          point1.goal = "false"
-        else
-          score2 = score2 - (1 * cannon2.multiplier)
-          point2.goal = "false"
+          if cannon1.item4 == "switch" then
+            score1 = score1 + (1 * cannon1.multiplier)
+            point1.goal = "true"
+          else
+            score1 = score1 - (1 * cannon1.multiplier)
+            point1.goal = "false"
+          end
+          
+        elseif cnr ==2 then
+          if cannon2.item4 == "switch" then
+            score2 = score2 + (1 * cannon2.multiplier)
+            point2.goal = "true"
+          else
+            score2 = score2 - (1 * cannon2.multiplier)
+            point2.goal = "false"
+          end
+          
         end
         
       elseif v.correct == "laser" then
@@ -133,7 +152,6 @@ function checkCollision(ball, cnr)
             laserOn(cannon2)
             point2.goal = "laser"
           end
-      
       elseif v.correct == "change" then
         if cnr == 1 then
           changeOn(cannon2)
@@ -150,20 +168,33 @@ function checkCollision(ball, cnr)
           doubleOn(cannon2)
           point2.goal = "double"
         end
+      elseif v.correct == "switch" then
+        if cnr == 1 then
+          switchOn(cannon2)
+          point1.goal = "switch"
+        else
+          switchOn(cannon1)
+          point2.goal = "switch"
+        end
       end
 
       love.audio.play(alarm)
       table.remove(wappen.allTargets, i)
 
       return true
-
-    else 
-
-
-
     end
   end
   return false
+end
+
+function switchOn(cannon)
+  cannon.item4 = "switch"
+  cannon.timer4 = switchItem.timer
+end
+
+function switchOff(cannon)
+  cannon.item4 = "none"
+  cannon.timer4 = 0
 end
 
 function doubleOn(cannon)
@@ -180,20 +211,25 @@ end
 
 
 function changeOn(cannon)
-  left = cannon.left
-  right = cannon.right
-  
-  cannon.left = right
-  cannon.right = left
+  if cannon.name == "cannon1" then
+    cannon.left = right1
+    cannon.right = left1
+  elseif cannon.name == "cannon2" then
+    cannon.left = right2
+    cannon.right = left2
+  end
   cannon.timer2 = changeItem.timer
   cannon.item2 = "change"
 end
 function changeOff(cannon)
-  left = cannon.left
-  right = cannon.right
-  
-  cannon.left = right
-  cannon.right = left
+  if cannon.name == "cannon1" then
+    cannon.left = left1
+    cannon.right = right1
+  elseif cannon.name == "cannon2" then
+
+    cannon.left = left2
+    cannon.right = right2
+  end
   cannon.timer2 = 0
   cannon.item2 = "none"
 end
@@ -308,8 +344,9 @@ local function load()
   
   score1 = 0
   score2 = 0
-  carbonFont = love.graphics.newFont("fonts/carbon.ttf", 70)
-  defaultFont = love.graphics.newFont(70)
+  carbonFont = love.graphics.newFont("fonts/carbon.ttf", 60)
+  defaultFont = love.graphics.newFont(60)
+  defaultFontSmall = love.graphics.newFont(40)
   
   
   --COUNTDOWN
@@ -357,6 +394,17 @@ local function load()
   cannon1sprite  = love.graphics.newImage("cannon/cannon1.png")
   cannon2sprite  = love.graphics.newImage("cannon/cannon2.png")
   
+  left1 = "left"
+  right1 = "right"
+  shoot1 = "m"
+
+  left2 = "a"
+  right2 = "d"
+  shoot2 = "f"
+  
+  cooldown1 = 80
+  cooldown2 = 80
+  
   cannon1 = {
     name = "cannon1",
     cannonSprite = love.graphics.newImage("cannon/cannon1.png"),
@@ -376,9 +424,9 @@ local function load()
     speed = 2,
     weapon = "default",
     coolDownTime = 0,
-    left = "left",
-    right = "right",
-    shoot = "m",
+    left = left1,
+    right = right1,
+    shoot = shoot1,
     timer = 0,
     timer2 = 0,
     timer3 = 0,
@@ -408,9 +456,9 @@ local function load()
     speed = 2,
     weapon = "default",
     coolDownTime = 0,
-    left = "a",
-    right = "d",
-    shoot = "f",
+    left = left2,
+    right = right2,
+    shoot = shoot2,
     timer = 0,
     timer2 = 0,
     timer3 = 0,
@@ -421,6 +469,8 @@ local function load()
     item4 = "none",
     multiplier = 1
   }
+  
+  
   
   laserItem = {
     typ = "item",
@@ -448,6 +498,13 @@ local function load()
     sprite = love.graphics.newImage("items/doppel.png"),
     multiplier = 2
   }
+  
+  switchItem = {
+    typ = "item",
+    name = "switch",
+    timer = 10, 
+    sprite = love.graphics.newImage("items/switch.png")
+    }
   
 end
 radiusC = 20
@@ -496,6 +553,16 @@ local function update(dt)
   end
   doubleTimer(cannon1)
   doubleTimer(cannon2)
+  
+  function switchTimer(cannon) 
+    if cannon.timer4 > 0 then
+      cannon.timer4 = cannon.timer4 - dt
+    elseif cannon.timer4 < 0 then
+      switchOff(cannon)
+    end
+  end
+  switchTimer(cannon1)
+  switchTimer(cannon2)
     
   
   --COUNTDOWN
@@ -545,7 +612,7 @@ local function update(dt)
     
     if cannon1.coolDownTime <= 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 80
+        cannon1.coolDownTime = cooldown1
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
@@ -561,7 +628,7 @@ local function update(dt)
     
     if cannon1.coolDownTime < 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 80
+        cannon1.coolDownTime = cooldown1
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
@@ -597,7 +664,7 @@ local function update(dt)
     
     if cannon2.coolDownTime <= 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 80
+        cannon2.coolDownTime = cooldown2
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
@@ -613,11 +680,11 @@ local function update(dt)
     
     if cannon2.coolDownTime < 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 80
+        cannon2.coolDownTime = 
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
-        cannon2.coolDownTime = laser.coolDownTime
+        cannon2.coolDownTime = cooldown2
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         table.insert(bullets2, {x = startX, y = startY, dx = dx+20, dy = dy+20})
         table.insert(bullets2, {x = startX, y = startY, dx = dx+40, dy = dy+40})
@@ -674,7 +741,7 @@ end
 
 local function draw()
   love.graphics.setColor(200, 200, 200)
-  love.graphics.draw(background, 0, 0, 0, 
+  love.graphics.draw(background, 0, 0, 0,
   love.graphics.getWidth() / background:getWidth() , 
   love.graphics.getHeight() / background:getHeight())
   love.graphics.setColor(255, 255, 255)
@@ -691,13 +758,13 @@ local function draw()
   --love.graphics.circle("fill", cannon1.x, cannon1.y, 4)
 
   --love.graphics.circle("fill", startX, startY, 4)
-  --startX, startY = abschussPosition1(cannon1)
-  --dx, dy = abschussVektor1(cannon1)
-  --love.graphics.line(startX, startY, startX + dx, startY + dy)
+--  startX, startY = abschussPosition1(cannon1)
+--  dx, dy = abschussVektor1(cannon1)
+--  love.graphics.line(startX, startY, startX + dx, startY + dy)
 
-  --startX, startY = abschussPosition2(cannon2)
-  --dx, dy = abschussVektor2(cannon2)
-  --love.graphics.line(startX, startY, startX + dx, startY + dy)
+--  startX, startY = abschussPosition2(cannon2)
+--  dx, dy = abschussVektor2(cannon2)
+--  love.graphics.line(startX, startY, startX + dx, startY + dy)
 
   love.graphics.setColor(255, 255, 255)
   for i,v in ipairs(bullets1) do
@@ -724,16 +791,16 @@ local function draw()
   
   screenscale = love.graphics.getWidth() / 1536
   
-  love.graphics.draw(brett, 300, playgroundHeight - 130, 0, 
-    1.2 * screenscale, 1 * screenscale)
+  love.graphics.draw(brett, 370, playgroundHeight - 110, 0, 
+    0.8 * screenscale, 0.8 * screenscale)
     
   love.graphics.setFont(carbonFont)
   love.graphics.setColor(0,0,0)
-  love.graphics.print(score1, playgroundWidth - 400, playgroundHeight - 100)
+  love.graphics.print(score1, playgroundWidth - 500, playgroundHeight - 100)
   love.graphics.print(score2, 400, playgroundHeight - 100)
   
   --Game Countdown
-  love.graphics.print(math.floor(remainingTime), playgroundWidth / 2, playgroundHeight - 100)
+  love.graphics.print(math.floor(remainingTime), (playgroundWidth / 2) - 20, playgroundHeight - 100)
   love.graphics.setColor(255,255,255)
   
   if remainingTime < 11 and countdownIsOn == false then
@@ -741,42 +808,52 @@ local function draw()
     countdownIsOn = true
   end
   
+   love.graphics.setFont(defaultFontSmall)
   --Item Countdown
-  if cannon1.timer > 0 or cannon1.timer2 > 0 or cannon1.timer3 > 0  then
+  if cannon1.timer > 0 or cannon1.timer2 > 0 or cannon1.timer3 > 0 or cannon1.timer4 > 0 then
     if cannon1.item == "laser" then
-      love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 160, playgroundHeight - 400)
-      love.graphics.draw(laserItem.sprite, playgroundWidth - (laserItem.sprite:getWidth()+10), playgroundHeight - 400)
+      love.graphics.print(math.floor(cannon1.timer), playgroundWidth - 340, playgroundHeight - 50)
+      love.graphics.draw(laserItem.sprite, playgroundWidth - 305, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     if cannon1.item2 == "change" then
-      love.graphics.print(math.floor(cannon1.timer2), playgroundWidth - 160, playgroundHeight - 500)
-      love.graphics.draw(changeItem.sprite, playgroundWidth - (changeItem.sprite:getWidth()+10), playgroundHeight - 500)
+      love.graphics.print(math.floor(cannon1.timer2), playgroundWidth - 255, playgroundHeight - 50)
+      love.graphics.draw(changeItem.sprite, playgroundWidth - 220, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     if cannon1.item3 == "double" then
-      love.graphics.print(math.floor(cannon1.timer3), playgroundWidth - 160, playgroundHeight - 300)
-      love.graphics.draw(doubleItem.sprite, playgroundWidth - (changeItem.sprite:getWidth()+10), playgroundHeight - 300)
+      love.graphics.print(math.floor(cannon1.timer3), playgroundWidth - 170, playgroundHeight - 50)
+      love.graphics.draw(doubleItem.sprite, playgroundWidth - 135, playgroundHeight - 50, 0, 0.5, 0.5)
+    end
+    if cannon1.item4 == "switch" then
+      love.graphics.print(math.floor(cannon1.timer4), playgroundWidth - 85, playgroundHeight - 50)
+      love.graphics.draw(switchItem.sprite, playgroundWidth - 50, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     love.graphics.setColor(255,255,255)
   end
   
-  if cannon2.timer > 0 or cannon2.timer2 > 0 or cannon2.timer3 > 0 then
+ 
+  if cannon2.timer > 0 or cannon2.timer2 > 0 or cannon2.timer3 > 0 or cannon2.timer4 > 0 then
     if cannon2.item == "laser" then
-      love.graphics.print(math.floor(cannon2.timer), 120, playgroundHeight - 400)
-      love.graphics.draw(laserItem.sprite, 10, playgroundHeight - 400)
+      love.graphics.print(math.floor(cannon2.timer), 5, playgroundHeight - 50)
+      love.graphics.draw(laserItem.sprite, 40, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     if cannon2.item2 == "change" then
-      love.graphics.print(math.floor(cannon2.timer2), 120, playgroundHeight - 500)
-      love.graphics.draw(changeItem.sprite, 10, playgroundHeight - 500)
+      love.graphics.print(math.floor(cannon2.timer2), 90, playgroundHeight - 50)
+      love.graphics.draw(changeItem.sprite, 125, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     if cannon2.item3 == "double" then
-      love.graphics.print(math.floor(cannon2.timer3), 120, playgroundHeight - 300)
-      love.graphics.draw(doubleItem.sprite, 10, playgroundHeight - 300)
+      love.graphics.print(math.floor(cannon2.timer3), 175, playgroundHeight - 50)
+      love.graphics.draw(doubleItem.sprite, 210, playgroundHeight - 50, 0, 0.5, 0.5)
+    end
+     if cannon2.item4 == "switch" then
+      love.graphics.print(math.floor(cannon2.timer4), 260, playgroundHeight - 50)
+      love.graphics.draw(switchItem.sprite, 295, playgroundHeight - 50, 0, 0.5, 0.5)
     end
     love.graphics.setColor(255,255,255)
   end
   
   --love.graphics.circle("line", 200, 200, radiusC)
-  love.graphics.setFont(defaultFont)
   
+   love.graphics.setFont(defaultFont)
   --Punkte bei Abschuss anzeigen
   if point1.x > 0 and point1.y > 0 and point1.t > 0 then
     if point1.goal == "true" then
@@ -795,6 +872,9 @@ local function draw()
       love.graphics.setColor(255,255,255)
     elseif point1.goal == "double" then
       love.graphics.print("double", point1.x-50, point1.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point1.goal == "switch" then
+      love.graphics.print("switch", point1.x-50, point1.y-50)
       love.graphics.setColor(255,255,255)
     end
   end
@@ -816,6 +896,9 @@ local function draw()
       love.graphics.setColor(255,255,255)
     elseif point2.goal == "double" then
       love.graphics.print("double", point2.x-50, point2.y-50)
+      love.graphics.setColor(255,255,255)
+    elseif point2.goal == "switch" then
+      love.graphics.print("switch", point2.x-50, point2.y-50)
       love.graphics.setColor(255,255,255)
     end
   end
