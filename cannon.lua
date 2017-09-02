@@ -2,9 +2,18 @@ local cannon = {}
 
 require 'lib.slam'
 local wappen = require('wappen')
+local sprite = require('sprite')
 local background
 local brett
-
+--/////////////////////////////////////////
+local explosionX
+local explosionY
+local finisher = 0
+local fps = 11
+local anim_timer = 1/ fps
+local frame = 1
+local num_frames = 15
+local xoffset
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
@@ -45,16 +54,29 @@ function getBoundingBoxBall(ball)
   return ball_left, ball_top, ball_width, ball_height
 end
 
-
+function animation(dt)
+  anim_timer = anim_timer -dt
+  if anim_timer <= 0 then
+    anim_timer = 1 / fps
+    frame = frame + 1
+    xoffset = 128 * frame
+    explosion_sprite:setViewport(xoffset, 0, 128,128)
+    if frame > num_frames then
+      frame = 1
+      finisher = 0
+    end
+  end
+end
 
 function checkCollision(ball, cnr)
   ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
-  if ball_top < 120 then
-      return false
-  end
+  --Auskommentiert, damit der Abschuss auch am oberen Bildschirmrand funktioniert.
+  --if ball_top < 120 then
+      --return false
+  --end
   
   local t = wappen.allTargets
   for i = #t, 1, -1 do
@@ -76,7 +98,13 @@ function checkCollision(ball, cnr)
       ball_top > v_bottom or
       ball_bottom < v_top
       ) then
-
+      
+      --hier aus v.koordinaten die für die explosion
+      --////////////////////////////////////////////////////////////////////////////////////////////////////
+       explosionY = v_bottom - (v_bottom-v_top)
+       explosionX = v_right - (v_right-v_left)
+      
+      
       if v.correct == "true" then
         if cnr == 1 then
           score1 = score1 + (1 * cannon1.multiplier)
@@ -274,6 +302,8 @@ end
 
 
 local function load()
+  sprite.load()
+  
   score1 = 0
   score2 = 0
   font = love.graphics.newFont("fonts/carbon.ttf", 70)
@@ -299,9 +329,9 @@ local function load()
 --bang:setVolume(0.7)
 
 
-  background = love.graphics.newImage("background/Hintergrund Stuttgart flach.jpg")
+  background = love.graphics.newImage("background/Hintergrund-Stuttgart-flach.jpg")
   brett = love.graphics.newImage("background/brett-anzeige.png")
-  endScreen = love.graphics.newImage("background/game over.png")
+  endScreen = love.graphics.newImage("background/game-over.png")
  
 
   playgroundWidth = love.graphics.getWidth()
@@ -598,17 +628,22 @@ local function update(dt)
     elseif cannon1.weapon == "laser" then
       v.dy = v.dy + 0
     end
-    
+    --/////////////////////////////////////////////////////////////////////////////////////////////7
   --/////////////Kanonenkugeln bei Kollision entfernen//////////////////
     if checkCollision(v, 1) then 
       point1.x = v.x
       point1.y = v.y
       point1.t = 1
+      finisher = 1
       --addExplosion(v.x, v.y)
       --table.remove(bullets1, i)
     end
   end
-
+  
+  if finisher == 1 then
+    animation(dt)
+    end
+  
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
@@ -743,7 +778,11 @@ local function draw()
       love.graphics.setColor(255,255,255)
     end
   end
-      
+  
+  
+  if point1.x > 0 and point1.y > 0 then
+    sprite.drawExplosion(explosionX, explosionY)
+    end
 
   
   
