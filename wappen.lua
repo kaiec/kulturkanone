@@ -69,11 +69,19 @@ local function load()
     sprite = love.graphics.newImage("items/doppel.png")
   }
   
+  switchItem = {
+    typ = "item",
+    name = "switch",
+    timer = 5, 
+    sprite = love.graphics.newImage("items/switch.png")
+    }
+  
   
   items = {}
   table.insert(items, laserItem)
   table.insert(items, changeItem)
   table.insert(items, doubleItem)
+  table.insert(items, switchItem)
     
     
 
@@ -95,13 +103,13 @@ local function load()
     
     target.targetX = love.math.random(0, (playingAreaWidth)-(target.targetWidth))
     
-    if randomNumber <= 40 then
+    if randomNumber <= 30 then
       target.image = wrongs[love.math.random(1, #wrongs)]
       target.correct = "false"
-    elseif randomNumber > 40  and randomNumber <= 80 then
+    elseif randomNumber > 30  and randomNumber <= 60 then
       target.image = images[love.math.random(1, #images)]
       target.correct = "true"
-    elseif randomNumber  > 80 then
+    elseif randomNumber  > 60 then
       randomItem = love.math.random(1, #items)
       target.image = items[randomItem].sprite
       target.correct = items[randomItem].name
