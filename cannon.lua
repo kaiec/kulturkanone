@@ -321,14 +321,14 @@ local function load()
   
   
   backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3")
-  backgroundMusic:setLooping(false)
-  backgroundMusic:setVolume(.3)
+  backgroundMusic:setLooping(true)
+  backgroundMusic:setVolume(.9)
   love.audio.play(backgroundMusic)
   bang = love.audio.newSource("audio/pui.wav")
   laserSound = love.audio.newSource("audio/pui.wav")
   countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
-  bang:setVolume(0.5) -- 50% of ordinary volume
+  bang:setVolume(0.3) -- 50% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
 --bang:setVolume(0.7)
 
@@ -649,6 +649,7 @@ local function update(dt)
   end
   
   if finisher == 1 then
+    --sprite.drawExplosion(explosionX, explosionY)
     animation(dt)
     end
   
@@ -661,7 +662,7 @@ local function update(dt)
       v.dy = v.dy + 0
     end
 
-    if checkCollision(v, 2) then
+    if cmpheckCollision(v, 2) then
      point2.x = v.x
       point2.y = v.y
       point2.t = 1
