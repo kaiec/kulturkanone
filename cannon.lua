@@ -73,16 +73,12 @@ function checkCollision(ball, cnr)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
-<<<<<<< HEAD
+
   --Auskommentiert, damit der Abschuss auch am oberen Bildschirmrand funktioniert.
   --if ball_top < 120 then
       --return false
   --end
-=======
---  if ball_top < 120 then
---      return false
---  end
->>>>>>> 197e640a4396b65cc1f410786ac00a2de60c14ad
+
   
   local t = wappen.allTargets
   for i = #t, 1, -1 do
@@ -332,7 +328,7 @@ local function load()
   laserSound = love.audio.newSource("audio/pui.wav")
   countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
---bang:setVolume(0.9) -- 90% of ordinary volume
+  bang:setVolume(0.5) -- 50% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
 --bang:setVolume(0.7)
 
