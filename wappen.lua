@@ -95,14 +95,16 @@ local function load()
    target = {} 
     target.targetHeight = 75
     target.targetWidth = 75
+    
     target.targetY = love.math.random(0, (playingAreaHeight/2))
+    target.targetX = love.math.random(0, (playingAreaWidth)-(target.targetWidth))
     
     randomNumber = love.math.random(1,100)
     target.timer = love.math.random(2,4)
     
     
     target.targetX = love.math.random(0, (playingAreaWidth)-(target.targetWidth))
-    
+
     if randomNumber <= 30 then
       target.image = wrongs[love.math.random(1, #wrongs)]
       target.correct = "false"

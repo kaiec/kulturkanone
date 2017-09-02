@@ -2,9 +2,18 @@ local cannon = {}
 
 require 'lib.slam'
 local wappen = require('wappen')
+local sprite = require('sprite')
 local background
 local brett
-
+--/////////////////////////////////////////
+local explosionX
+local explosionY
+local finisher = 0
+local fps = 11
+local anim_timer = 1/ fps
+local frame = 1
+local num_frames = 15
+local xoffset
 
 alarm = love.audio.newSource("audio/scifiShoot.wav")
 
@@ -31,14 +40,6 @@ point2 = {
 
 
 
-
-
-
-
-
-
-
-
 function getBoundingBoxBall(ball)
   local ball_left = ball.x - cannonball1:getWidth() / 2
   local ball_right = ball_left + cannonball1:getWidth()
@@ -49,16 +50,31 @@ function getBoundingBoxBall(ball)
   return ball_left, ball_top, ball_width, ball_height
 end
 
-
+function animation(dt)
+  anim_timer = anim_timer -dt
+  if anim_timer <= 0 then
+    anim_timer = 1 / fps
+    frame = frame + 1
+    xoffset = 128 * frame
+    explosion_sprite:setViewport(xoffset, 0, 128,128)
+    if frame > num_frames then
+      frame = 1
+      finisher = 0
+    end
+  end
+end
 
 function checkCollision(ball, cnr)
   ball_left, ball_top, ball_width, ball_height = getBoundingBoxBall(ball)
   local ball_right = ball_left + ball_width
   local ball_bottom = ball_top + ball_height
 
---  if ball_top < 120 then
---      return false
---  end
+
+  --Auskommentiert, damit der Abschuss auch am oberen Bildschirmrand funktioniert.
+  --if ball_top < 120 then
+      --return false
+  --end
+
   
   local t = wappen.allTargets
   for i = #t, 1, -1 do
@@ -80,23 +96,52 @@ function checkCollision(ball, cnr)
       ball_top > v_bottom or
       ball_bottom < v_top
       ) then
-
+      
+      --hier aus v.koordinaten die für die explosion
+      --////////////////////////////////////////////////////////////////////////////////////////////////////
+       explosionY = v_bottom - (v_bottom-v_top)
+       explosionX = v_right - (v_right-v_left)
+      
+      
       if v.correct == "true" then
         if cnr == 1 then
-          score1 = score1 + (1 * cannon1.multiplier)
-          point1.goal = "true"
-        else
-          score2 = score2 + (1 * cannon2.multiplier)
-          point2.goal = "true"
+          if cannon1.item4 == "switch" then
+            score1 = score1 - (1 * cannon1.multiplier)
+            point1.goal = "false"
+          else
+            score1 = score1 + (1 * cannon1.multiplier)
+            point1.goal = "true"
+          end
+          
+        elseif cnr == 2 then
+          if cannon2.item4 == "switch" then
+            score2 = score2 - (1 * cannon2.multiplier)
+            point2.goal = "false"
+          else
+            score2 = score2 + (1 * cannon2.multiplier)
+            point2.goal = "true"
+          end
         end
         
       elseif v.correct == "false" then
         if cnr == 1 then
-          score1 = score1 - (1 * cannon1.multiplier)
-          point1.goal = "false"
-        else
-          score2 = score2 - (1 * cannon2.multiplier)
-          point2.goal = "false"
+          if cannon1.item4 == "switch" then
+            score1 = score1 + (1 * cannon1.multiplier)
+            point1.goal = "true"
+          else
+            score1 = score1 - (1 * cannon1.multiplier)
+            point1.goal = "false"
+          end
+          
+        elseif cnr ==2 then
+          if cannon2.item4 == "switch" then
+            score2 = score2 + (1 * cannon2.multiplier)
+            point2.goal = "true"
+          else
+            score2 = score2 - (1 * cannon2.multiplier)
+            point2.goal = "false"
+          end
+          
         end
         
       elseif v.correct == "laser" then
@@ -295,6 +340,8 @@ end
 
 
 local function load()
+  sprite.load()
+  
   score1 = 0
   score2 = 0
   carbonFont = love.graphics.newFont("fonts/carbon.ttf", 60)
@@ -318,7 +365,7 @@ local function load()
   laserSound = love.audio.newSource("audio/pui.wav")
   countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
---bang:setVolume(0.9) -- 90% of ordinary volume
+  bang:setVolume(0.5) -- 50% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
 --bang:setVolume(0.7)
 
@@ -354,6 +401,9 @@ local function load()
   left2 = "a"
   right2 = "d"
   shoot2 = "f"
+  
+  cooldown1 = 80
+  cooldown2 = 80
   
   cannon1 = {
     name = "cannon1",
@@ -562,7 +612,7 @@ local function update(dt)
     
     if cannon1.coolDownTime <= 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 80
+        cannon1.coolDownTime = cooldown1
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
@@ -578,7 +628,7 @@ local function update(dt)
     
     if cannon1.coolDownTime < 0 then
       if cannon1.weapon == "default" then
-        cannon1.coolDownTime = 80
+        cannon1.coolDownTime = cooldown1
         table.insert(bullets1, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon1.weapon == "laser" then
@@ -614,7 +664,7 @@ local function update(dt)
     
     if cannon2.coolDownTime <= 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 80
+        cannon2.coolDownTime = cooldown2
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
@@ -630,11 +680,11 @@ local function update(dt)
     
     if cannon2.coolDownTime < 0 then
       if cannon2.weapon == "default" then
-        cannon2.coolDownTime = 80
+        cannon2.coolDownTime = 
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         bang:play()
       elseif cannon2.weapon == "laser" then
-        cannon2.coolDownTime = laser.coolDownTime
+        cannon2.coolDownTime = cooldown2
         table.insert(bullets2, {x = startX, y = startY, dx = dx, dy = dy})
         table.insert(bullets2, {x = startX, y = startY, dx = dx+20, dy = dy+20})
         table.insert(bullets2, {x = startX, y = startY, dx = dx+40, dy = dy+40})
@@ -653,17 +703,22 @@ local function update(dt)
     elseif cannon1.weapon == "laser" then
       v.dy = v.dy + 0
     end
-    
+    --/////////////////////////////////////////////////////////////////////////////////////////////7
   --/////////////Kanonenkugeln bei Kollision entfernen//////////////////
     if checkCollision(v, 1) then 
       point1.x = v.x
       point1.y = v.y
       point1.t = 1
+      finisher = 1
       --addExplosion(v.x, v.y)
       table.remove(bullets1, i)
     end
   end
-
+  
+  if finisher == 1 then
+    animation(dt)
+    end
+  
   for i,v in ipairs(bullets2) do
     v.x = v.x + (v.dx * dt) 
     v.y = v.y + (v.dy * dt)
@@ -740,7 +795,7 @@ local function draw()
     
   love.graphics.setFont(carbonFont)
   love.graphics.setColor(0,0,0)
-  love.graphics.print(score1, playgroundWidth - 460, playgroundHeight - 100)
+  love.graphics.print(score1, playgroundWidth - 500, playgroundHeight - 100)
   love.graphics.print(score2, 400, playgroundHeight - 100)
   
   --Game Countdown
@@ -846,7 +901,11 @@ local function draw()
       love.graphics.setColor(255,255,255)
     end
   end
-      
+  
+  
+  if point1.x > 0 and point1.y > 0 then
+    sprite.drawExplosion(explosionX, explosionY)
+    end
 
   
   
