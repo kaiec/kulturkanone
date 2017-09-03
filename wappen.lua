@@ -73,7 +73,7 @@ local function load()
     typ = "item",
     name = "switch",
     timer = 5, 
-    sprite = love.graphics.newImage("items/switch.png")
+    sprite = love.graphics.newImage("items/wechsel.png")
     }
   
   

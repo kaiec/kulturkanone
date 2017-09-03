@@ -503,7 +503,7 @@ local function load()
     typ = "item",
     name = "switch",
     timer = 10, 
-    sprite = love.graphics.newImage("items/switch.png")
+    sprite = love.graphics.newImage("items/wechsel.png")
     }
   
 end
@@ -729,7 +729,7 @@ local function update(dt)
       v.dy = v.dy + 0
     end
 
-    if cmpheckCollision(v, 2) then
+    if checkCollision(v, 2) then
      point2.x = v.x
       point2.y = v.y
       point2.t = 1
