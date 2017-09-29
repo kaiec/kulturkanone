@@ -324,17 +324,22 @@ function abschussPosition1(cannon)
   --print ("Direction", direction)
   dist = math.sqrt((cannon.kx-cannon.ox)*(cannon.kx-cannon.ox) + (cannon.ky-cannon.oy)*(cannon.ky-cannon.oy))
   dist = dist * 0.7
-  --print ("Distance: ", dist)
-  --print("Rotation: ", rad2deg(cannon.rotation))
+  
+  print ("Distance: ", dist)
+  print("Rotation: ", rad2deg(cannon.rotation))
+  
   y = - math.sin(cannon.alpha+cannon.rotation) * dist 
   x = - math.cos(cannon.alpha+cannon.rotation) * dist
-  --print("dx,dy: ", x, y)
-  --print("cannon x,y: ", cannon.x, cannon.y)
+  
+  print("dx,dy: ", x, y)
+  print("cannon x,y: ", cannon.x, cannon.y)
+  
   resultx = cannon.x + x 
   resulty = cannon.y + y
-  --print("result x,y: ", resultx, resulty)
+  
+  print("result x,y: ", resultx, resulty)
+  
   return resultx, resulty
-
 end
 
 
@@ -361,8 +366,8 @@ local function load()
   backgroundMusic:setLooping(false)
   backgroundMusic:setVolume(.3)
   love.audio.play(backgroundMusic)
-  bang = love.audio.newSource("audio/pui.wav")
-  laserSound = love.audio.newSource("audio/pui.wav")
+  bang = love.audio.newSource("audio/bang.wav")
+  laserSound = love.audio.newSource("audio/laser.wav")
   countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
   bang:setVolume(0.5) -- 50% of ordinary volume
@@ -751,15 +756,15 @@ local function draw()
   --love.graphics.draw(wappen.changeSprite, 100, 100)
 
   --love.graphics.circle("fill", cannon2.x, cannon2.y, 4)
-  --startX, startY = abschussPosition2(cannon2)
+  startX, startY = abschussPosition1(cannon1)
   --love.graphics.circle("fill", startX, startY, 4)
 
   --love.graphics.circle("fill", cannon1.x, cannon1.y, 4)
 
   --love.graphics.circle("fill", startX, startY, 4)
---  startX, startY = abschussPosition1(cannon1)
---  dx, dy = abschussVektor1(cannon1)
---  love.graphics.line(startX, startY, startX + dx, startY + dy)
+  --startX, startY = abschussPosition1(cannon1)
+  dx, dy = abschussVektor1(cannon1)
+  --love.graphics.line(startX, startY, startX + dx, startY + dy)
 
 --  startX, startY = abschussPosition2(cannon2)
 --  dx, dy = abschussVektor2(cannon2)
