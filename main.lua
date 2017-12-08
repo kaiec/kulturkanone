@@ -2,24 +2,32 @@
 require('lib.slam')
 local wappen = require('wappen')
 local cannon = require('cannon')
+local selection = require('selection')
 local coundownAndRememberWappen = require('coundownAndRememberWappen')
 local startmenu = require ('startmenu')
 
-local gamestate = "spiel"
+local gamestate = "start"
 
 function love.load()
     love.window.setFullscreen(true)
     startmenu.load()
+    selection.load()
     coundownAndRememberWappen.load()
     wappen.load()
     cannon.load()
     print("Window size: ", love.graphics.getWidth(), love.graphics.getHeight())
+    love.keyboard.setKeyRepeat(false)
 end
 
 function love.update(dt)
   if gamestate=="start" then
     startmenu.update(dt)
     if startmenu.done() then
+      gamestate = "selection"
+    end
+  elseif gamestate=="selection" then
+    selection.update(dt)
+    if selection.done() then
       gamestate = "remember"
     end
   elseif gamestate=="remember" then
@@ -30,6 +38,9 @@ function love.update(dt)
   elseif gamestate=="spiel" then
     wappen.update(dt)
     cannon.update(dt)
+    if cannon.done() then
+      gamestate = "start"
+    end
   end
 
 end
@@ -37,6 +48,8 @@ end
 function love.draw()
   if gamestate=="start" then
     startmenu.draw()
+  elseif gamestate=="selection" then
+    selection.draw()
   elseif gamestate=="remember" then
     coundownAndRememberWappen.draw()
   elseif gamestate=="spiel" then
@@ -80,4 +93,10 @@ function love.keypressed(key)
   if key=="p" then
      love.event.quit() 
   end 
+  
+  if gamestate=="selection" then
+    selection.keypressed(key)
+  end
+  
+  
 end

@@ -5,6 +5,7 @@ local wappen = require('wappen')
 local sprite = require('sprite')
 local background
 local brett
+local modulState = false
 --/////////////////////////////////////////
 local explosionX
 local explosionY
@@ -355,7 +356,7 @@ local function load()
   
   
   --COUNTDOWN
-  remainingTime = 100
+  remainingTime = 61
   gameover = false
   --//////////////////
   
@@ -370,7 +371,7 @@ local function load()
   laserSound = love.audio.newSource("audio/laser.wav")
   countdownAlarm = love.audio.newSource("audio/countdown.wav")
 
-  bang:setVolume(0.3) -- 50% of ordinary volume
+  bang:setVolume(1) -- 50% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
 --bang:setVolume(0.7)
 
@@ -515,6 +516,10 @@ end
 radiusC = 20
 local function update(dt)
   
+--  if love.keyboard.isDown("space") then
+--    modulState = true
+--  end
+  
   --Countdown für die Punkte bei Abschuss eines Wappen oder Item
   if point1.t > 0 then
     point1.t = point1.t - dt
@@ -577,23 +582,34 @@ local function update(dt)
   end
   
 --Spiel wird nach Countdown beendet
---  if gameover then
---    function love.draw()
---      love.audio.stop(countdownAlarm)
---      love.graphics.draw(endScreen , 0, 0, 0, 
---      love.graphics.getWidth() / endScreen:getWidth() , 
---      love.graphics.getHeight() / endScreen:getHeight())      
---      love.graphics.setColor(255, 10, 10)
---      love.graphics.setFont(font)
+  if gameover then
+    function love.draw()
+      love.audio.stop(countdownAlarm)
+      love.graphics.draw(endScreen , 0, 0, 0, 
+      love.graphics.getWidth() / endScreen:getWidth() , 
+      love.graphics.getHeight() / endScreen:getHeight())      
+      love.graphics.setColor(255, 10, 10)
+      love.graphics.setFont(carbonFont)
       
---      love.graphics.print("Game Over", love.graphics.getWidth()/3, playgroundHeight - 500)
---      love.graphics.setFont(font, love.graphics.getHeight() / 20)
---      love.graphics.print(score2, love.graphics.getWidth()/4, playgroundHeight - 300)
---      love.graphics.print(score1, love.graphics.getWidth()/4 * 3, playgroundHeight - 300)
---      love.graphics.setColor(255, 255, 255)
+      love.graphics.print("Game Over", love.graphics.getWidth()/3, playgroundHeight - 500)
+      love.graphics.setFont(carbonFont, love.graphics.getHeight() / 20)
+      love.graphics.print(score2, love.graphics.getWidth()/4, playgroundHeight - 300)
+      love.graphics.print(score1, love.graphics.getWidth()/4 * 3, playgroundHeight - 300)
+      love.graphics.setFont(defaultFontSmall)
+      love.graphics.print("Drücke p um das Spiel zu verlassen.", 300, playgroundHeight - 100)
+      --love.graphics.print("Drücke Leertaste um erneut zu spielen.", 100, playgroundHeight - 50)
+      love.graphics.setColor(255, 255, 255)
     
---    end
---  end
+    end
+  
+    function love.update()
+      if love.keyboard.isDown("space") then
+      modulState = true
+    end
+  
+    end
+    
+  end
   --////////////////////////
 
   --///////////Spieler rechts bewegen///////////////////
@@ -970,8 +986,13 @@ end
 --  end
 --end
 
+function isDone()
+  return modulState
+end
+
 cannon.load = load
 cannon.update = update
 cannon.draw = draw
+cannon.done = isDone
 
 return cannon
