@@ -5,7 +5,7 @@ local wappen = require('wappen')
 local background
 local brett
 
-alarm = love.audio.newSource("audio/scifiShoot.wav")
+alarm = love.audio.newSource("audio/scifiShoot.wav", "static")
 
 screenscale = love.graphics.getWidth() / 1536
 
@@ -162,12 +162,12 @@ local function load()
   countdownIsOn = false
   
   
-  backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3")
+  backgroundMusic = love.audio.newSource("audio/radetzkymarsch.mp3", "stream")
   backgroundMusic:setLooping(false)
   backgroundMusic:setVolume(.3)
   love.audio.play(backgroundMusic)
-  bang = love.audio.newSource("audio/bang.wav")
-  countdownAlarm = love.audio.newSource("audio/countdown.wav")
+  bang = love.audio.newSource("audio/bang.wav", "static")
+  countdownAlarm = love.audio.newSource("audio/countdown.wav", "static")
 
 --bang:setVolume(0.9) -- 90% of ordinary volume
 --bang:setPitch(0.5) -- one octave lower
